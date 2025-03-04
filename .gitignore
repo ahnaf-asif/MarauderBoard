@@ -1,0 +1,48 @@
+# Binaries & Compiled Files
+/bin/
+/vendor/
+/tmp/
+*.exe
+*.out
+*.test
+*.so
+*.dll
+
+# Go Modules & Caches
+/go.work
+/go.work.sum
+/go.sum
+/go.mod
+/.cache/
+/pkg/
+
+# Fiber-Specific
+fiber.lock
+
+# Editor & OS-specific Files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Logs & Debugging
+*.log
+debug/
+
+# Environment Files
+.env
+.env.local
+.env.production
+.env.development
+
+# Redis (if using persistence)
+dump.rdb
+appendonly.aof
+
+# HTMX & Alpine.js Frontend Build Files (if needed)
+node_modules/
+public/build/
+dist/
+
+# Docker
+docker-compose.override.yml
