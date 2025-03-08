@@ -1,8 +1,15 @@
 package models
 
+import (
+	"gorm.io/gorm"
+)
+
 type User struct {
-	ID       int `gorm:"primary_key"`
-	Name     string
-	Email    string
-	Password string
+	gorm.Model
+
+	Name       string
+	Email      string
+	Password   string
+	Workspaces []*Workspace `gorm:"many2many:user_workspaces;"`
+	Teams      []*Team      `gorm:"many2many:team_users;"`
 }
