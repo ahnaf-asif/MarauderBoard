@@ -11,8 +11,6 @@
 # Go Modules & Caches
 /go.work
 /go.work.sum
-/go.sum
-/go.mod
 /.cache/
 /pkg/
 

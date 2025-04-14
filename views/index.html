@@ -1,0 +1,12 @@
+<div class="text-3xl">
+  {{if .User.FirstName}}
+  <div class="flex items-center gap-4 ml-10 mt-4">
+    <img class="rounded-full w-16 h-16" src="{{.User.Avatar}}" alt="User Picture">
+    <h1 class="text-3xl font-bold">Welcome back, {{.User.FirstName}}!</h1>
+    <a href="/auth/logout" class="text-blue-500 hover:underline">Log out</a>
+  </div>
+  {{else}}
+  <a href="/auth/google" class="text-blue-500 hover:underline">Login with Google</a>
+  <h1 class="text-3xl font-bold">Welcome to the Go Web App!</h1>
+  {{end}}
+</div>
