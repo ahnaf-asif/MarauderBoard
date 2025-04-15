@@ -1,0 +1,76 @@
+{{ define "layouts/dashboard" }}
+<!DOCTYPE html>
+<html lang="en">
+
+{{ template "partials/header" . }}
+
+<body class="bg-gray-100 text-gray-900">
+
+  <div class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 bg-white border-r flex flex-col flex-shrink-0">
+      <div class="px-6 py-4 border-b flex items-center justify-between">
+        <a class="flex items-center space-x-2 font-bold text-indigo-600" href="/">
+          <img src="/static/favicon.png" class="w-6 h-6" alt="Logo">
+          <span>MarauderBoard</span>
+        </a>
+      </div>
+
+      <nav class="flex-1 px-4 py-4 space-y-2 text-sm">
+        <a href="/dashboard"
+          class="block px-4 py-2 rounded hover:bg-indigo-50 text-indigo-700 font-medium">Dashboard</a>
+        <a href="/workspaces" class="block px-4 py-2 rounded hover:bg-indigo-50">Workspaces</a>
+        <a href="/teams" class="block px-4 py-2 rounded hover:bg-indigo-50">Teams</a>
+        <a href="/projects" class="block px-4 py-2 rounded hover:bg-indigo-50">Projects</a>
+        <a href="/settings" class="block px-4 py-2 rounded hover:bg-indigo-50">Settings</a>
+      </nav>
+    </aside>
+
+    <div class="flex-1 flex flex-col overflow-hidden">
+
+      <header class="bg-white shadow px-6 py-3 flex items-center justify-between">
+        {{if .PageTitle }}
+        <div class="text-xl font-semibold">{{.PageTitle}}</div>
+        {{else}}
+        <div class="text-xl font-semibold">Dashboard</div>
+        {{end}}
+        <div class="flex items-center space-x-4">
+          {{ if .User.Email }}
+          <div x-data="{ open: false }" class="relative">
+            <button @click="open = !open" class="flex items-center space-x-1 focus:outline-none">
+              <img src="{{ .User.Avatar }}" alt="Avatar" class="w-8 h-8 rounded-full border border-gray-300">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-500" viewBox="0 0 20 20"
+                fill="currentColor">
+                <path fill-rule="evenodd"
+                  d="M5.23 7.21a.75.75 0 011.06.02L10 11.586l3.71-4.356a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z"
+                  clip-rule="evenodd" />
+              </svg>
+            </button>
+            <div x-show="open" @click.away="open = false"
+              class="absolute right-0 mt-2 w-48 bg-white shadow rounded py-2 z-50">
+              <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a href="/settings" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
+              <a href="/auth/logout" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+            </div>
+          </div>
+          {{ else }}
+          <a href="/auth/google"
+            class="inline-flex items-center px-4 py-2 bg-white text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-2" alt="Google icon">
+            Login with Google
+          </a>
+          {{ end }}
+        </div>
+      </header>
+
+      <main class="flex-1 overflow-y-auto p-6">
+        {{ embed }}
+      </main>
+    </div>
+
+  </div>
+
+</body>
+
+</html>
+{{ end }}

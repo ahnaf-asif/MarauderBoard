@@ -1,19 +1,15 @@
 {{ define "layouts/main" }}
 <!DOCTYPE html>
-<html>
+<html lang="en">
+{{ template "partials/header" . }}
 
-<head>
-  <title>Main Here Bruh</title>
-  <!-- add alpine js and tailwind css and htmx cdn -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-  <script src="https://unpkg.com/htmx.org@1.9.3" defer></script>
-</head>
-
-<body>
-  {{embed}}
+<body class="bg-gray-100 text-gray-900 flex flex-col min-h-screen">
+  {{ template "partials/navbar" . }}
+  <main class="flex-1 container mx-auto px-4 py-6">
+    {{embed}}
+  </main>
+  {{ template "partials/footer" . }}
 </body>
 
 </html>
-
 {{ end }}
