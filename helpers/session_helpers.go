@@ -21,10 +21,10 @@ func SetSessionConfig() *session.Store {
 		}),
 		KeyLookup:      "cookie:_gothic_session",
 		CookieDomain:   "",
-		CookiePath:     "",
-		CookieSecure:   os.Getenv("ENVIRONMENT") == "production",
+		CookiePath:     "/",
+		CookieSecure:   false,
 		CookieHTTPOnly: true,
-		CookieSameSite: "Lax",
+		CookieSameSite: "None",
 		KeyGenerator:   func() string { return uuid.New().String() },
 	}
 	sessionStore := session.New(config)

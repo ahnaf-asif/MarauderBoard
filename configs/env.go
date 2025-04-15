@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	Host               string
 	Port               string
 	DbUrl              string
 	RedisUrl           string
@@ -32,6 +33,7 @@ func LoadEnv() {
 		log.Println("Error loading .env file: ", err)
 	}
 
+	Host = getEnv("HOST", "127.0.0.1")
 	Port = getEnv("PORT", "42069")
 	Environment = getEnv("ENVIRONMENT", "development")
 	AuthMaxAge, _ = strconv.Atoi(getEnv("AUTH_MAX_AGE", "3600"))

@@ -73,6 +73,7 @@ func RegisterAuthRoutes(auth fiber.Router) {
 			log.Fatal(err)
 		}
 
-		return ctx.Redirect("/", fiber.StatusFound)
+		redirect_uri := ctx.Cookies("redirect_uri", "/")
+		return ctx.Redirect(redirect_uri, fiber.StatusFound)
 	})
 }

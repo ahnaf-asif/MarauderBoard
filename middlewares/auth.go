@@ -8,6 +8,14 @@ import (
 func AuthMiddleware(ctx *fiber.Ctx) error {
 	user, err := helpers.GetAuthUserSessionData(ctx)
 	if err != nil {
+		ctx.Cookie(&fiber.Cookie{
+			Name:     "redirect_uri",
+			MaxAge:   300,
+			Value:    ctx.OriginalURL(),
+			HTTPOnly: true,
+			SameSite: "Laz",
+		})
+
 		return ctx.Redirect("/auth/google")
 	}
 
