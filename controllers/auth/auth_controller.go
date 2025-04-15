@@ -18,7 +18,13 @@ func RegisterAuthRoutes(auth fiber.Router) {
 		return ctx.Redirect("/", fiber.StatusFound)
 	})
 
-	auth.Get(":provider", goth_fiber.BeginAuthHandler)
+	auth.Get(":provider", func(ctx *fiber.Ctx) error {
+		_, err := goth_fiber.GetFromSession("user_data", ctx)
+		if err != nil {
+			return goth_fiber.BeginAuthHandler(ctx)
+		}
+		return ctx.Redirect("/", fiber.StatusFound)
+	})
 
 	auth.Get(":provider/callback", func(ctx *fiber.Ctx) error {
 		user, err := goth_fiber.CompleteUserAuth(ctx)
@@ -39,7 +45,7 @@ func RegisterAuthRoutes(auth fiber.Router) {
 			}
 
 			if err := models.AddNewUser(database.DB, new_user); err != nil {
-				log.Fatal("Error happened here:", err)
+				log.Fatal("AddNewUser Error happened here:", err)
 			}
 		} else {
 			found_user.FirstName = user.FirstName
@@ -55,6 +61,7 @@ func RegisterAuthRoutes(auth fiber.Router) {
 			FirstName: user.FirstName,
 			LastName:  user.LastName,
 			Provider:  user.Provider,
+			Avatar:    user.AvatarURL,
 		}
 
 		user_data_json, err := json.Marshal(user_data)

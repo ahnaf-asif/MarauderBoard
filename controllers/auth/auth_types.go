@@ -5,4 +5,5 @@ type UserSessionData struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
 	Provider  string `json:"provider"`
+	Avatar    string `json:"avatar"`
 }
