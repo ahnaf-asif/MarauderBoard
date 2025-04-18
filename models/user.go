@@ -35,9 +35,9 @@ func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
 	return &user, nil
 }
 
-func UpdateUser(db *gorm.DB, user *User) error {
+func UpdateUser(db *gorm.DB, user *User) (*User, error) {
 	if err := db.Save(user).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return user, nil
 }
