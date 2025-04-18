@@ -44,23 +44,26 @@ func RegisterAuthRoutes(auth fiber.Router) {
 				Avatar:    &user.AvatarURL,
 			}
 
-			if err := models.AddNewUser(database.DB, new_user); err != nil {
+			db_user, err := models.AddNewUser(database.DB, new_user)
+			if err != nil {
 				log.Fatal("AddNewUser Error happened here:", err)
 			}
+			found_user = db_user
 		} else {
 			found_user.FirstName = user.FirstName
 			found_user.LastName = user.LastName
 			found_user.Avatar = &user.AvatarURL
-			if err := models.UpdateUser(database.DB, found_user); err != nil {
+			if _, err := models.UpdateUser(database.DB, found_user); err != nil {
 				log.Fatal(err)
 			}
 		}
 
 		user_data := UserSessionData{
-			Email:     user.Email,
-			FirstName: user.FirstName,
-			LastName:  user.LastName,
-			Provider:  user.Provider,
+			ID:        found_user.ID,
+			Email:     found_user.Email,
+			FirstName: found_user.FirstName,
+			LastName:  found_user.LastName,
+			Provider:  *found_user.Provider,
 			Avatar:    user.AvatarURL,
 		}
 

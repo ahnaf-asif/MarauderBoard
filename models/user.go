@@ -18,11 +18,12 @@ type User struct {
 	Teams      []*Team      `gorm:"many2many:team_users;"`
 }
 
-func AddNewUser(db *gorm.DB, user User) error {
+func AddNewUser(db *gorm.DB, user User) (*User, error) {
 	if err := db.Create(&user).Error; err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return &user, nil
 }
 
 func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
