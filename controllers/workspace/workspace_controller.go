@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/ahnafasif/MarauderBoard/controllers/project"
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
@@ -11,6 +12,9 @@ import (
 )
 
 func RegisterWorkspaceControllers(app fiber.Router) {
+	projectGroup := app.Group("/:workspace_id/projects")
+	project_controller.RegisterProjectControllers(projectGroup)
+
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		user, _ := helpers.GetAuthUserSessionData(ctx)
 		workspaces, err := models.GetAllWorkspacesByUserId(database.DB, user.ID)
