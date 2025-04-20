@@ -3,6 +3,7 @@ package controllers
 import (
 	"log"
 
+	ai_controller "github.com/ahnafasif/MarauderBoard/controllers/ai"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
 	"github.com/ahnafasif/MarauderBoard/controllers/workspace"
 	"github.com/ahnafasif/MarauderBoard/helpers"
@@ -46,4 +47,7 @@ func RegisterRoutes(app *fiber.App) {
 
 	workspaceGroup := app.Group("/workspaces", middlewares.AuthMiddleware)
 	workspace_controller.RegisterWorkspaceControllers(workspaceGroup)
+
+	aiGroup := app.Group("/ai", middlewares.AuthMiddleware)
+	ai_controller.RegisterAiControllers(aiGroup)
 }

@@ -18,6 +18,7 @@ var (
 	Environment        string
 	GoogleClientId     string
 	GoogleClientSecret string
+	OllamaApiUri       string
 )
 
 func getEnv(key, defaultValue string) string {
@@ -42,4 +43,5 @@ func LoadEnv() {
 	RedisUrl = getEnv("REDIS_URL", "localhost:6379")
 	GoogleClientId = getEnv("GOOGLE_CLIENT_ID", "")
 	GoogleClientSecret = getEnv("GOOGLE_CLIENT_SECRET", "")
+	OllamaApiUri = getEnv("OLLAMA_API_URI", "http://localhost:11434")
 }
