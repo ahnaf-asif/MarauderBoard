@@ -125,4 +125,3 @@ func RenderMessagesHTML(messages []Message) (string, error) {
 	}
 	return buf.String(), nil
 }
-
