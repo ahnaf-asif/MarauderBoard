@@ -17,21 +17,21 @@
       </div>
 
       <nav class="flex-1 px-4 py-4 space-y-2 text-sm">
-        <a href="/dashboard"
-          :class="{'text-indigo-700': currentUrl.includes('dashboard'), 'text-black': !currentUrl.includes('dashboard')}"
-          class="block px-4 py-2 rounded hover:bg-indigo-50 font-medium">Dashboard</a>
+        <a href="/dashboard" :class="{
+    'text-indigo-700': currentUrl === '/dashboard',
+    'text-black': currentUrl !== '/dashboard'
+  }" class="block px-4 py-2 rounded hover:bg-indigo-50 font-medium">
+          Dashboard
+        </a>
         <a href="/workspaces"
           :class="{'text-indigo-700': currentUrl.includes('workspaces'), 'text-black': !currentUrl.includes('workspaces')}"
           class="block px-4 py-2 rounded hover:bg-indigo-50">Workspaces</a>
-        <a href="/teams"
-          :class="{'text-indigo-700': currentUrl.includes('teams'), 'text-black': !currentUrl.includes('teams')}"
-          class="block px-4 py-2 rounded hover:bg-indigo-50">Teams</a>
-        <a href="/projects"
-          :class="{'text-indigo-700': currentUrl.includes('projects'), 'text-black': !currentUrl.includes('projects')}"
-          class="block px-4 py-2 rounded hover:bg-indigo-50">Projects</a>
-        <a href="/settings"
-          :class="{'text-indigo-700': currentUrl.includes('settings'), 'text-black': !currentUrl.includes('settings')}"
-          class="block px-4 py-2 rounded hover:bg-indigo-50">Settings</a>
+        <a href="/ai/chat" :class="{
+    'text-indigo-700': currentUrl.includes('/ai/chat'),
+    'text-black': !currentUrl.includes('/ai/chat')
+  }" class="block px-4 py-2 rounded hover:bg-indigo-50">
+          AI Chat
+        </a>
       </nav>
     </aside>
 
@@ -52,6 +52,7 @@
             <div x-show="open" @click.away="open = false"
               class="absolute right-0 mt-2 w-48 bg-white shadow rounded py-2 z-50">
               <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
+              <a href="/ai/chat" class="block px-4 py-2 hover:bg-gray-100">AI Chat</a>
               <a href="/settings" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
               <a href="/auth/logout" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
             </div>

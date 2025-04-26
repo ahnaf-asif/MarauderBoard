@@ -66,4 +66,3 @@ func RegisterAiControllers(app fiber.Router) {
 		}, "layouts/dashboard")
 	})
 }
-

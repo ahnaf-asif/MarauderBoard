@@ -5,6 +5,7 @@ import (
 
 	ai_controller "github.com/ahnafasif/MarauderBoard/controllers/ai"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
+	dashboard_controller "github.com/ahnafasif/MarauderBoard/controllers/dashboard"
 	"github.com/ahnafasif/MarauderBoard/controllers/workspace"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/middlewares"
@@ -35,12 +36,8 @@ func RegisterRoutes(app *fiber.App) {
 		}, "layouts/main")
 	})
 
-	app.Get("/dashboard", middlewares.AuthMiddleware, func(ctx *fiber.Ctx) error {
-		user := ctx.Locals("User")
-		return ctx.Render("dashboard", fiber.Map{
-			"User": user,
-		}, "layouts/dashboard")
-	})
+	dashboardGroup := app.Group("/dashboard")
+	dashboard_controller.RegisterDashboardController(dashboardGroup)
 
 	authGroup := app.Group("/auth")
 	auth.RegisterAuthRoutes(authGroup)
