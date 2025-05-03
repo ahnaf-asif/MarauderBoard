@@ -1,80 +1,114 @@
 {{ define "layouts/dashboard" }}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  {{ template "partials/header" . }}
 
-{{ template "partials/header" . }}
+  <body
+    class="bg-gray-100 text-gray-900"
+    x-data="{ currentUrl: window.location.pathname }"
+  >
+    <div class="flex h-screen overflow-hidden">
+      <aside class="w-64 bg-white border-r flex flex-col flex-shrink-0">
+        <div class="px-6 py-4 border-b flex items-center justify-between">
+          <a
+            class="flex items-center space-x-2 font-bold text-indigo-600"
+            href="/"
+          >
+            <img src="/static/favicon.png" class="w-6 h-6" alt="Logo" />
+            <span>MarauderBoard</span>
+          </a>
+        </div>
 
-<body class="bg-gray-100 text-gray-900" x-data="{ currentUrl: window.location.pathname }">
-
-  <div class="flex h-screen overflow-hidden">
-
-    <aside class="w-64 bg-white border-r flex flex-col flex-shrink-0">
-      <div class="px-6 py-4 border-b flex items-center justify-between">
-        <a class="flex items-center space-x-2 font-bold text-indigo-600" href="/">
-          <img src="/static/favicon.png" class="w-6 h-6" alt="Logo">
-          <span>MarauderBoard</span>
-        </a>
-      </div>
-
-      <nav class="flex-1 px-4 py-4 space-y-2 text-sm">
-        <a href="/dashboard" :class="{
+        <nav class="flex-1 px-4 py-4 space-y-2 text-sm">
+          <a
+            href="/dashboard"
+            :class="{
     'text-indigo-700': currentUrl === '/dashboard',
     'text-black': currentUrl !== '/dashboard'
-  }" class="block px-4 py-2 rounded hover:bg-indigo-50 font-medium">
-          Dashboard
-        </a>
-        <a href="/workspaces"
-          :class="{'text-indigo-700': currentUrl.includes('workspaces'), 'text-black': !currentUrl.includes('workspaces')}"
-          class="block px-4 py-2 rounded hover:bg-indigo-50">Workspaces</a>
-        <a href="/ai/chat" :class="{
+  }"
+            class="block px-4 py-2 rounded hover:bg-indigo-50 font-medium"
+          >
+            Dashboard
+          </a>
+          <a
+            href="/workspaces"
+            :class="{'text-indigo-700': currentUrl.includes('workspaces'), 'text-black': !currentUrl.includes('workspaces')}"
+            class="block px-4 py-2 rounded hover:bg-indigo-50"
+            >Workspaces</a
+          >
+          <a
+            href="/ai/chat"
+            :class="{
     'text-indigo-700': currentUrl.includes('/ai/chat'),
     'text-black': !currentUrl.includes('/ai/chat')
-  }" class="block px-4 py-2 rounded hover:bg-indigo-50">
-          AI Chat
-        </a>
-      </nav>
-    </aside>
-
-    <div class="flex-1 flex flex-col overflow-hidden">
-
-      <header class="bg-white shadow px-6 py-3 flex items-center justify-between">
-        {{if .PageTitle }}
-        <div class="text-xl font-semibold">{{.PageTitle}}</div>
-        {{else}}
-        <div class="text-xl font-semibold">Dashboard</div>
-        {{end}}
-        <div class="flex items-center space-x-4">
-          {{ if .User.Email }}
-          <div x-data="{ open: false }" class="relative">
-            <button @click="open = !open" class="flex items-center space-x-1 focus:outline-none">
-              <img src="{{ .User.Avatar }}" alt="Avatar" class="w-8 h-8 rounded-full border-2 border-indigo-500">
-            </button>
-            <div x-show="open" @click.away="open = false"
-              class="absolute right-0 mt-2 w-48 bg-white shadow rounded py-2 z-50">
-              <a href="/profile" class="block px-4 py-2 hover:bg-gray-100">Profile</a>
-              <a href="/ai/chat" class="block px-4 py-2 hover:bg-gray-100">AI Chat</a>
-              <a href="/settings" class="block px-4 py-2 hover:bg-gray-100">Settings</a>
-              <a href="/auth/logout" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
-            </div>
-          </div>
-          {{ else }}
-          <a href="/auth/google"
-            class="inline-flex items-center px-4 py-2 bg-white text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 mr-2" alt="Google icon">
-            Login with Google
+  }"
+            class="block px-4 py-2 rounded hover:bg-indigo-50"
+          >
+            AI Chat
           </a>
-          {{ end }}
-        </div>
-      </header>
+        </nav>
+      </aside>
 
-      <main class="flex-1 overflow-y-auto p-6">
-        {{ embed }}
-      </main>
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <header
+          class="bg-white shadow px-6 py-3 flex items-center justify-between"
+        >
+          {{if .PageTitle }}
+          <div class="text-xl font-semibold">{{.PageTitle}}</div>
+          {{else}}
+          <div class="text-xl font-semibold">Dashboard</div>
+          {{end}}
+          <div class="flex items-center space-x-4">
+            {{ if .User.Email }}
+            <div x-data="{ open: false }" class="relative">
+              <button
+                @click="open = !open"
+                class="flex items-center space-x-1 focus:outline-none"
+              >
+                <img
+                  src="{{ .User.Avatar }}"
+                  alt="Avatar"
+                  class="avatar-img w-8 h-8 rounded-full border-2 border-indigo-500"
+                />
+              </button>
+              <div
+                x-show="open"
+                @click.away="open = false"
+                class="absolute right-0 mt-2 w-48 bg-white shadow rounded py-2 z-50"
+              >
+                <a href="/profile" class="block px-4 py-2 hover:bg-gray-100"
+                  >Profile</a
+                >
+                <a href="/ai/chat" class="block px-4 py-2 hover:bg-gray-100"
+                  >AI Chat</a
+                >
+                <a href="/settings" class="block px-4 py-2 hover:bg-gray-100"
+                  >Settings</a
+                >
+                <a href="/auth/logout" class="block px-4 py-2 hover:bg-gray-100"
+                  >Logout</a
+                >
+              </div>
+            </div>
+            {{ else }}
+            <a
+              href="/auth/google"
+              class="inline-flex items-center px-4 py-2 bg-white text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                class="w-5 h-5 mr-2"
+                alt="Google icon"
+              />
+              Login with Google
+            </a>
+            {{ end }}
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6">{{ embed }}</main>
+      </div>
     </div>
-
-  </div>
-
-</body>
-
+  </body>
 </html>
 {{ end }}

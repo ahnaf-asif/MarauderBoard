@@ -26,14 +26,14 @@ func RegisterRoutes(app *fiber.App) {
 		return ctx.Render("index", fiber.Map{}, "layouts/main")
 	})
 
+	authGroup := app.Group("/auth")
+	auth.RegisterAuthRoutes(authGroup)
+
 	profileGroup := app.Group("/profile", middlewares.AuthMiddleware)
 	profile_controller.RegisterProfileRoutes(profileGroup)
 
-	dashboardGroup := app.Group("/dashboard")
+	dashboardGroup := app.Group("/dashboard", middlewares.AuthMiddleware)
 	dashboard_controller.RegisterDashboardController(dashboardGroup)
-
-	authGroup := app.Group("/auth")
-	auth.RegisterAuthRoutes(authGroup)
 
 	workspaceGroup := app.Group("/workspaces", middlewares.AuthMiddleware)
 	workspace_controller.RegisterWorkspaceControllers(workspaceGroup)

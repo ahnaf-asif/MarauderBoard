@@ -42,3 +42,22 @@ func GetAuthUserSessionData(ctx *fiber.Ctx) (auth.UserSessionData, error) {
 
 	return user_data, nil
 }
+
+func SetAuthUserSessionData(
+	ctx *fiber.Ctx, new_session_data auth.UserSessionData,
+) (auth.UserSessionData, error) {
+	user_data_json, err := json.Marshal(new_session_data)
+	if err != nil {
+		return new_session_data, err
+	}
+
+	if err := goth_fiber.StoreInSession(
+		"user_data", string(user_data_json), ctx,
+	); err != nil {
+		return new_session_data, err
+	}
+
+	log.Println("User data in goth session: ", new_session_data)
+
+	return new_session_data, nil
+}

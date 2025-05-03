@@ -1,0 +1,31 @@
+{{ define "partials/success-message-with-disappear" }}
+
+<div
+  id="success-message"
+  class="mb-5 text-green-500 font-semibold transition-opacity duration-500"
+>
+  {{ .Message }}
+</div>
+
+{{ if .RefreshAvatar }}
+<script>
+  const allAvatars = document.querySelectorAll(".avatar-img");
+  allAvatars.forEach((avatar) => {
+    avatar.src = "{{ .Avatar }}";
+  });
+</script>
+{{ end }}
+
+<script>
+  const msg = document.getElementById("success-message");
+  setTimeout(function () {
+    if (msg) {
+      msg.style.opacity = "0";
+      setTimeout(function () {
+        msg.remove();
+      }, 500);
+    }
+  }, 2000);
+</script>
+
+{{ end }}

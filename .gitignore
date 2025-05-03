@@ -1,3 +1,5 @@
+# Git ignore for upload file path
+/public/uploads/
 # Binaries & Compiled Files
 /bin/
 /vendor/

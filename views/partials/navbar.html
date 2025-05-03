@@ -8,26 +8,30 @@
     </a>
     <div class="flex items-center space-x-4">
       {{ if or (not .User) (not .User.Email) }}
-      <a href="/auth/google"
+      <a href="/auth/login"
         class="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition">
-        <svg class="w-5 h-5" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg">
-          <path fill="#4285F4"
-            d="M533.5 278.4c0-17.7-1.5-35-4.4-51.7H272v97.9h146.9c-6.3 33.9-25.4 62.6-54.2 81.8v67.5h87.4c51.1-47 81.4-116.4 81.4-195.5z" />
-          <path fill="#34A853"
-            d="M272 544.3c73.5 0 135.3-24.4 180.3-66.4l-87.4-67.5c-24.3 16.3-55.3 25.8-92.9 25.8-71.4 0-131.9-48.2-153.6-112.9H29v70.8C73.9 478.5 167.9 544.3 272 544.3z" />
-          <path fill="#FBBC05"
-            d="M118.4 323.3c-10.2-30.2-10.2-62.8 0-93l-70.9-70.8C-2.5 220.3-2.5 323.8 47.5 405.7l70.9-82.4z" />
-          <path fill="#EA4335"
-            d="M272 107.5c39.9 0 75.8 13.7 104.1 40.5l78-78C407.3 24.6 347.6 0 272 0 167.9 0 73.9 65.8 29 162.7l70.9 70.8C140.1 155.7 200.6 107.5 272 107.5z" />
-        </svg>
-        <span class="font-medium">Login with Google</span>
+        Sign in
       </a>
+      <!-- <a href="/auth/google" -->
+      <!--   class="flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-md shadow-sm bg-white text-gray-700 hover:bg-gray-50 transition"> -->
+      <!--   <svg class="w-5 h-5" viewBox="0 0 533.5 544.3" xmlns="http://www.w3.org/2000/svg"> -->
+      <!--     <path fill="#4285F4" -->
+      <!--       d="M533.5 278.4c0-17.7-1.5-35-4.4-51.7H272v97.9h146.9c-6.3 33.9-25.4 62.6-54.2 81.8v67.5h87.4c51.1-47 81.4-116.4 81.4-195.5z" /> -->
+      <!--     <path fill="#34A853" -->
+      <!--       d="M272 544.3c73.5 0 135.3-24.4 180.3-66.4l-87.4-67.5c-24.3 16.3-55.3 25.8-92.9 25.8-71.4 0-131.9-48.2-153.6-112.9H29v70.8C73.9 478.5 167.9 544.3 272 544.3z" /> -->
+      <!--     <path fill="#FBBC05" -->
+      <!--       d="M118.4 323.3c-10.2-30.2-10.2-62.8 0-93l-70.9-70.8C-2.5 220.3-2.5 323.8 47.5 405.7l70.9-82.4z" /> -->
+      <!--     <path fill="#EA4335" -->
+      <!--       d="M272 107.5c39.9 0 75.8 13.7 104.1 40.5l78-78C407.3 24.6 347.6 0 272 0 167.9 0 73.9 65.8 29 162.7l70.9 70.8C140.1 155.7 200.6 107.5 272 107.5z" /> -->
+      <!--   </svg> -->
+      <!--   <span class="font-medium">Login with Google</span> -->
+      <!-- </a> -->
 
       {{ else }}
 
       <div x-data="{ open: false }" class="relative">
         <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-          <img src="{{ .User.Avatar }}" alt="User Avatar" class="w-10 h-10 rounded-full border-2 border-indigo-500">
+          <img src="{{ .User.Avatar }}" alt="User Avatar" class="avatar-img w-10 h-10 rounded-full border-2 border-indigo-500">
         </button>
 
         <div x-show="open" @click.away="open = false" x-transition
