@@ -6,6 +6,7 @@ import (
 	ai_controller "github.com/ahnafasif/MarauderBoard/controllers/ai"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
 	dashboard_controller "github.com/ahnafasif/MarauderBoard/controllers/dashboard"
+	profile_controller "github.com/ahnafasif/MarauderBoard/controllers/profile"
 	"github.com/ahnafasif/MarauderBoard/controllers/workspace"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/middlewares"
@@ -25,16 +26,8 @@ func RegisterRoutes(app *fiber.App) {
 		return ctx.Render("index", fiber.Map{}, "layouts/main")
 	})
 
-	app.Get("/profile", middlewares.AuthMiddleware, func(ctx *fiber.Ctx) error {
-		user, err := helpers.GetAuthUserSessionData(ctx)
-		if err != nil {
-			log.Println("User not found")
-			return ctx.Redirect("/")
-		}
-		return ctx.Render("profile", fiber.Map{
-			"User": user,
-		}, "layouts/main")
-	})
+	profileGroup := app.Group("/profile", middlewares.AuthMiddleware)
+	profile_controller.RegisterProfileRoutes(profileGroup)
 
 	dashboardGroup := app.Group("/dashboard")
 	dashboard_controller.RegisterDashboardController(dashboardGroup)

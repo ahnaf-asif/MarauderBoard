@@ -63,7 +63,7 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 			})
 		}
 
-		ctx.Set("HX-Redirect", fmt.Sprintf("/workspaces/%d", workspace.ID))
+		ctx.Set("HX-Redirect", fmt.Sprintf("/workspaces/%d/dashboard", workspace.ID))
 		return ctx.SendStatus(fiber.StatusNoContent)
 	})
 

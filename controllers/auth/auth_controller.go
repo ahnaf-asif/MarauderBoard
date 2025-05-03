@@ -2,6 +2,7 @@ package auth
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/ahnafasif/MarauderBoard/database"
@@ -16,6 +17,102 @@ func RegisterAuthRoutes(auth fiber.Router) {
 			log.Fatal(err)
 		}
 		return ctx.Redirect("/", fiber.StatusFound)
+	})
+
+	auth.Get("/register", func(ctx *fiber.Ctx) error {
+		_, err := goth_fiber.GetFromSession("user_data", ctx)
+		if err != nil {
+			return ctx.Render("auth/register", fiber.Map{
+				"User": nil,
+			})
+		}
+		return ctx.Redirect("/", fiber.StatusFound)
+	})
+
+	auth.Post("/register", func(ctx *fiber.Ctx) error {
+		email := ctx.FormValue("email")
+		password := ctx.FormValue("password")
+		first_name := ctx.FormValue("first_name")
+		last_name := ctx.FormValue("last_name")
+		confirm_password := ctx.FormValue("confirm_password")
+
+		if email == "" ||
+			password == "" ||
+			first_name == "" ||
+			last_name == "" ||
+			confirm_password == "" {
+			return ctx.Render("partials/error-message", "All fields are required")
+		}
+
+		if password != confirm_password {
+			return ctx.Render("partials/error-message", "Passwords do not match")
+		}
+
+		hashed_password, err := models.GeneratePasswordHash(password)
+		if err != nil {
+			log.Println("Error hashing password:", err)
+			return ctx.Render(
+				"partials/error-message", "Error creating account. Please try again.",
+			)
+		}
+
+		avatar_url := fmt.Sprintf(
+			"https://ui-avatars.com/api/?name=%s+%s&background=random",
+			first_name, last_name,
+		)
+
+		provider := "manual"
+
+		user := models.User{
+			Email:     email,
+			Password:  &hashed_password,
+			FirstName: first_name,
+			LastName:  last_name,
+			Provider:  &provider,
+			Avatar:    &avatar_url,
+		}
+
+		db_user, err := models.AddNewUser(database.DB, user)
+		if err != nil {
+			log.Println("Error creating user:", err)
+			return ctx.Render("partials/error-message", "Error creating account. Please try again")
+		}
+
+		user_data := UserSessionData{
+			ID:        db_user.ID,
+			Email:     db_user.Email,
+			FirstName: db_user.FirstName,
+			LastName:  db_user.LastName,
+			Provider:  *db_user.Provider,
+			Avatar:    *db_user.Avatar,
+		}
+
+		user_data_json, err := json.Marshal(user_data)
+		if err != nil {
+			log.Println("Error marshalling user data:", err)
+			return ctx.Render(
+				"partials/error-message", "Error creating account. Please try again",
+			)
+		}
+
+		if err := goth_fiber.StoreInSession("user_data", string(user_data_json), ctx); err != nil {
+			log.Println("Error storing user session:", err)
+			return ctx.Render(
+				"partials/error-message", "Error creating account. Please try again",
+			)
+		} else {
+			log.Println("User data stored in session(manual):", string(user_data_json))
+		}
+
+		redirect_uri := ctx.Cookies("redirect_uri", "/")
+		if redirect_uri == "" {
+			redirect_uri = "/"
+		}
+
+		return ctx.Render("partials/success-message-with-redirect", fiber.Map{
+			"Message":  "Account created successfully! Redirecting...",
+			"Redirect": redirect_uri,
+		})
 	})
 
 	auth.Get(":provider", func(ctx *fiber.Ctx) error {
@@ -33,7 +130,6 @@ func RegisterAuthRoutes(auth fiber.Router) {
 		}
 
 		found_user, err := models.GetUserByEmail(database.DB, user.Email)
-
 		if err != nil {
 			log.Println("User not found, creating new user:", err)
 			new_user := models.User{
@@ -49,13 +145,6 @@ func RegisterAuthRoutes(auth fiber.Router) {
 				log.Fatal("AddNewUser Error happened here:", err)
 			}
 			found_user = db_user
-		} else {
-			found_user.FirstName = user.FirstName
-			found_user.LastName = user.LastName
-			found_user.Avatar = &user.AvatarURL
-			if _, err := models.UpdateUser(database.DB, found_user); err != nil {
-				log.Fatal(err)
-			}
 		}
 
 		user_data := UserSessionData{
@@ -74,6 +163,8 @@ func RegisterAuthRoutes(auth fiber.Router) {
 
 		if err := goth_fiber.StoreInSession("user_data", string(user_data_json), ctx); err != nil {
 			log.Fatal(err)
+		} else {
+			log.Println("User data stored in session:", string(user_data_json))
 		}
 
 		redirect_uri := ctx.Cookies("redirect_uri", "/")
