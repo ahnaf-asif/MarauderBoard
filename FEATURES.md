@@ -4,11 +4,11 @@
 Handles secure login, registration, and user role-based access control.
 
 **Features:**
-- [ ] User Signup & Login using email and password.
-- [ ] Third-Party Login Support via OAuth (e.g., Google, GitHub) using the `Provider` field.
-- [ ] Role-based Access Control (Admin, Member, Leader).
-- [ ] Unique Email Validation with server-side checks.
-- [ ] User Profile Customization, including avatar and name updates.
+- [x] User Signup & Login using email and password.
+- [x] Third-Party Login Support via OAuth (e.g., Google, GitHub) using the `Provider` field.
+- [x] Role-based Access Control (Admin, Member, Leader).
+- [x] Unique Email Validation with server-side checks.
+- [x] User Profile Customization, including avatar and name updates.
 
 ---
 
@@ -16,11 +16,11 @@ Handles secure login, registration, and user role-based access control.
 Enables organizations to manage multiple teams and workspaces for different projects.
 
 **Features:**
-- [ ] Create and Manage Workspaces with admin assignment.
+- [x] Create and Manage Workspaces with admin assignment.
 - [ ] Invite Users to Workspaces or Teams via many-to-many relationships.
 - [ ] Team Creation Within Workspaces, with assigned team leaders.
 - [ ] Manage Workspace Settings like description and chat group assignment.
-- [ ] Visualize and Manage Relationships between users, teams, and projects.
+- [x] Visualize and Manage Relationships between users, teams, and projects.
 
 ---
 
@@ -40,7 +40,7 @@ Core functionality for tracking and organizing work items and projects.
 Enhances user experience and decision-making using AI integrations.
 
 **Features:**
-- [ ] AI Chat Assistant within a chat group for quick help and suggestions.
+- [x] AI Chat Assistant within a chat group for quick help and suggestions.
 - [ ] AI-Powered Task Suggestions while creating tasks (e.g., auto title or description).
 - [ ] Smart Task Assignment Recommendations based on workload and history.
 - [ ] Predictive Project Status Updates based on task trends.
