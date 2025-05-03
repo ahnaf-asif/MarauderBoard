@@ -1,59 +1,107 @@
 {{ define "projects/create" }}
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-{{ template "partials/header" . }}
+  {{ template "partials/header" . }}
 
-<body class="bg-gray-50 text-gray-900 h-screen w-screen flex items-center justify-center">
-  <div class="max-w-md w-full mx-auto p-6 bg-white shadow-lg rounded-xl" x-data="{ loading: false }">
-    <div class="text-center mb-6">
-      <img src="/static/favicon.png" class="mx-auto w-20 h-20 mb-2" alt="Logo" />
-      <h1 class="text-xl font-bold text-indigo-600">Add a new project</h1>
-      <p class="text-sm text-gray-600 mt-1">
-        to the workspace <span class="font-semibold text-indigo-500">{{ .Workspace.Name }}</span>
-      </p>
+  <body
+    class="bg-gray-50 text-gray-900 h-screen w-screen flex items-center justify-center"
+  >
+    <div
+      class="max-w-md w-full mx-auto p-6 bg-white shadow-lg rounded-xl"
+      x-data="{ loading: false }"
+    >
+      <div class="text-center mb-6">
+        <img
+          src="/static/favicon.png"
+          class="mx-auto w-20 h-20 mb-2"
+          alt="Logo"
+        />
+        <h1 class="text-xl font-bold text-indigo-600">Add a new project</h1>
+        <p class="text-sm text-gray-600 mt-1">
+          to the workspace
+          <span class="font-semibold text-indigo-500"
+            >{{ .Workspace.Name }}</span
+          >
+        </p>
+      </div>
+
+      <form
+        hx-post="/workspaces/{{.Workspace.ID}}/projects/create"
+        hx-target="#form-result"
+        hx-swap="innerHTML"
+        @htmx:beforeRequest="loading = true"
+        @htmx:afterRequest="loading = false"
+        class="space-y-4"
+      >
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Project Name</label
+          >
+          <input
+            type="text"
+            name="name"
+            required
+            class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700"
+            >Description</label
+          >
+          <textarea
+            name="description"
+            rows="3"
+            class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
+          ></textarea>
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            class="w-full px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition flex items-center justify-center gap-2"
+            :disabled="loading"
+            :class="{ 'opacity-70 cursor-not-allowed': loading }"
+          >
+            <template x-if="!loading">
+              <span>Create Project</span>
+            </template>
+            <template x-if="loading">
+              <span class="flex items-center gap-2">
+                <svg
+                  class="animate-spin h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+                Creating project...
+              </span>
+            </template>
+          </button>
+        </div>
+      </form>
+
+      <div
+        id="form-result"
+        class="mt-4 text-sm text-center text-green-600"
+      ></div>
     </div>
-
-    <form hx-post="/workspaces/{{.Workspace.ID}}/projects/create" hx-target="#form-result" hx-swap="innerHTML"
-      @htmx:beforeRequest="loading = true" @htmx:afterRequest="loading = false" class="space-y-4">
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Project Name</label>
-        <input type="text" name="name" required
-          class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500" />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea name="description" rows="3"
-          class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-      </div>
-
-      <div>
-        <button type="submit"
-          class="w-full px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition flex items-center justify-center gap-2"
-          :disabled="loading" :class="{ 'opacity-70 cursor-not-allowed': loading }">
-          <template x-if="!loading">
-            <span>Create Project</span>
-          </template>
-          <template x-if="loading">
-            <span class="flex items-center gap-2">
-              <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-                viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-              </svg>
-              Creating project...
-            </span>
-          </template>
-        </button>
-      </div>
-    </form>
-
-    <div id="form-result" class="mt-4 text-sm text-center text-green-600"></div>
-  </div>
-</body>
-
+  </body>
 </html>
 
 {{ end }}
