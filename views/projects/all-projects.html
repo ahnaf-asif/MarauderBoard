@@ -2,10 +2,19 @@
 <div class="mb-3">
   {{ if gt (len .Projects) 0 }}
   <div class="flex items-center text-sm text-gray-500">
-    <svg xmlns="http://www.w3.org/2000/svg" class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" fill="none"
-      viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
     </svg>
     Showing {{ len .Projects }} project{{ if ne (len .Projects) 1 }}s{{ end }}
   </div>
@@ -15,10 +24,13 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   {{ range .Projects }}
   <div
-    class="group relative bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden">
+    class="group relative bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden"
+  >
     <div class="p-5 flex flex-col flex-grow">
       <div class="mb-4">
-        <h2 class="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors duration-200">
+        <h2
+          class="text-xl font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors duration-200"
+        >
           {{ .Name }}
         </h2>
         <p class="text-sm text-gray-500 mt-2 line-clamp-2 leading-snug">
@@ -29,38 +41,50 @@
       <div class="mt-auto space-y-3 text-sm">
         <div class="flex items-center">
           <div class="flex-shrink-0 bg-gray-50 p-1.5 rounded-lg text-gray-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 9v2m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
           </div>
           <span class="ml-3 text-gray-600">
-            Status:
-            {{ $status := .Status }}
-            {{ if eq $status "Pending" }}
+            Status: {{ $status := .Status }} {{ if eq $status "Pending" }}
             <span
-              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-800">
+              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-800"
+            >
               ⏳ Pending
             </span>
             {{ else if eq $status "In-Progress" }}
             <span
-              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-100 text-blue-800">
+              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-100 text-blue-800"
+            >
               🚧 In-Progress
             </span>
             {{ else if eq $status "Complete" }}
             <span
-              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-green-100 text-green-800">
+              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-green-100 text-green-800"
+            >
               ✅ Complete
             </span>
             {{ else if eq $status "Cancelled" }}
             <span
-              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-800">
+              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-red-100 text-red-800"
+            >
               ❌ Cancelled
             </span>
             {{ else }}
             <span
-              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-600">
+              class="ml-1 inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-gray-100 text-gray-600"
+            >
               {{ .Status }}
             </span>
             {{ end }}
@@ -68,24 +92,45 @@
         </div>
 
         <div class="flex items-center">
-          <div class="flex-shrink-0 bg-purple-50 p-1.5 rounded-lg text-purple-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+          <div
+            class="flex-shrink-0 bg-purple-50 p-1.5 rounded-lg text-purple-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+              />
             </svg>
           </div>
           <span class="ml-3 text-gray-600">
-            <span class="font-medium">{{ len .Teams }}</span> team{{ if ne (len .Teams) 1 }}s{{ end }}
+            <span class="font-medium">{{ len .Teams }}</span> team{{ if ne (len
+            .Teams) 1 }}s{{ end }}
           </span>
         </div>
 
         <div class="flex items-center">
           <div class="flex-shrink-0 bg-blue-50 p-1.5 rounded-lg text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
             </svg>
           </div>
           <span class="ml-3 text-gray-600">
@@ -95,15 +140,28 @@
       </div>
     </div>
 
-    <div class="border-t border-gray-100 group-hover:border-gray-200 transition-colors duration-200">
-      <a href="/workspaces/{{ .WorkspaceId }}/projects/{{ .ID }}"
-        class="block p-3 text-center text-sm font-medium text-gray-500 group-hover:text-white group-hover:bg-indigo-600 transition-all duration-200">
+    <div
+      class="border-t border-gray-100 group-hover:border-gray-200 transition-colors duration-200"
+    >
+      <a
+        href="/workspaces/{{ .WorkspaceId }}/projects/{{ .ID }}"
+        class="block p-3 text-center text-sm font-medium text-gray-500 group-hover:text-white group-hover:bg-indigo-600 transition-all duration-200"
+      >
         <div class="flex items-center justify-center space-x-1">
           <span>View Project</span>
-          <svg xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-200" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            />
           </svg>
         </div>
       </a>
@@ -111,8 +169,10 @@
   </div>
   {{ end }}
 
-  <a href="/workspaces/{{ .Workspace.ID }}/projects/create"
-    class="flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-2xl hover:border-indigo-500 hover:shadow-sm transition-all duration-300 p-6 text-gray-500 hover:text-indigo-600">
+  <a
+    href="/workspaces/{{ .Workspace.ID }}/projects/create"
+    class="flex items-center justify-center bg-white border-2 border-dashed border-gray-300 rounded-2xl hover:border-indigo-500 hover:shadow-sm transition-all duration-300 p-6 text-gray-500 hover:text-indigo-600"
+  >
     <div class="flex flex-col items-center text-center space-y-2">
       <div class="text-4xl font-bold">+</div>
       {{ if gt (len .Projects) 0 }}

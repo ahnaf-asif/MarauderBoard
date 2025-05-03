@@ -1,4 +1,4 @@
-{{ define "projects/create" }}
+{{ define "auth/login" }}
 
 <!doctype html>
 <html lang="en">
@@ -17,17 +17,12 @@
           class="mx-auto w-20 h-20 mb-2"
           alt="Logo"
         />
-        <h1 class="text-xl font-bold text-indigo-600">Add a new project</h1>
-        <p class="text-sm text-gray-600 mt-1">
-          to the workspace
-          <span class="font-semibold text-indigo-500"
-            >{{ .Workspace.Name }}</span
-          >
-        </p>
+        <h1 class="text-xl font-bold text-indigo-600">Welcome Back</h1>
+        <p class="text-sm text-gray-600 mt-1">Sign in to continue</p>
       </div>
 
       <form
-        hx-post="/workspaces/{{.Workspace.ID}}/projects/create"
+        hx-post="/auth/login"
         hx-target="#form-result"
         hx-swap="innerHTML"
         @htmx:beforeRequest="loading = true"
@@ -35,12 +30,10 @@
         class="space-y-4"
       >
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Project Name</label
-          >
+          <label class="block text-sm font-medium text-gray-700">Email</label>
           <input
-            type="text"
-            name="name"
+            type="email"
+            name="email"
             required
             class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
           />
@@ -48,13 +41,14 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700"
-            >Description</label
+            >Password</label
           >
-          <textarea
-            name="description"
-            rows="3"
+          <input
+            type="password"
+            name="password"
+            required
             class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:ring-indigo-500 focus:border-indigo-500"
-          ></textarea>
+          />
         </div>
 
         <div>
@@ -65,7 +59,7 @@
             :class="{ 'opacity-70 cursor-not-allowed': loading }"
           >
             <template x-if="!loading">
-              <span>Create Project</span>
+              <span>Login</span>
             </template>
             <template x-if="loading">
               <span class="flex items-center gap-2">
@@ -89,17 +83,32 @@
                     d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                   ></path>
                 </svg>
-                Creating project...
+                Signing in...
               </span>
             </template>
           </button>
         </div>
+
+        <div class="flex items-center justify-center">
+          <span class="text-gray-400 text-sm">or</span>
+        </div>
+
+        <div>
+          <a
+            href="/auth/google"
+            class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded hover:bg-gray-100 transition text-sm font-medium text-gray-700"
+          >
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              class="h-5 w-5"
+              alt="Google"
+            />
+            Continue with Google
+          </a>
+        </div>
       </form>
 
-      <div
-        id="form-result"
-        class="mt-4 text-sm text-center text-green-600"
-      ></div>
+      <div id="form-result" class="mt-4 text-sm text-center"></div>
     </div>
   </body>
 </html>

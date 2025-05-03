@@ -16,7 +16,7 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 			SameSite: "Laz",
 		})
 
-		return ctx.Redirect("/auth/google")
+		return ctx.Redirect("/auth/login")
 	}
 
 	ctx.Locals("User", user)

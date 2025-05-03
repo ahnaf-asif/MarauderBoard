@@ -18,6 +18,7 @@ MarauderBoard is a lightweight, productivity-focused project management tool ins
 - PostgreSQL integration for data persistence  
 - Hot reloading with Air for seamless development
 
+### For full features, visit [FEATURES.MD](./FEATURES.md)
 ---
 
 ## Tech Stack

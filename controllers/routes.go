@@ -6,10 +6,12 @@ import (
 	ai_controller "github.com/ahnafasif/MarauderBoard/controllers/ai"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
 	dashboard_controller "github.com/ahnafasif/MarauderBoard/controllers/dashboard"
+	profile_controller "github.com/ahnafasif/MarauderBoard/controllers/profile"
 	"github.com/ahnafasif/MarauderBoard/controllers/workspace"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/middlewares"
 	"github.com/gofiber/fiber/v2"
+	"github.com/shareed2k/goth_fiber"
 )
 
 func RegisterRoutes(app *fiber.App) {
@@ -25,22 +27,21 @@ func RegisterRoutes(app *fiber.App) {
 		return ctx.Render("index", fiber.Map{}, "layouts/main")
 	})
 
-	app.Get("/profile", middlewares.AuthMiddleware, func(ctx *fiber.Ctx) error {
-		user, err := helpers.GetAuthUserSessionData(ctx)
-		if err != nil {
-			log.Println("User not found")
-			return ctx.Redirect("/")
+	app.Get("/auth/logout", func(ctx *fiber.Ctx) error {
+		if err := goth_fiber.Logout(ctx); err != nil {
+			log.Fatal(err)
 		}
-		return ctx.Render("profile", fiber.Map{
-			"User": user,
-		}, "layouts/main")
+		return ctx.Redirect("/", fiber.StatusFound)
 	})
 
-	dashboardGroup := app.Group("/dashboard")
-	dashboard_controller.RegisterDashboardController(dashboardGroup)
-
-	authGroup := app.Group("/auth")
+	authGroup := app.Group("/auth", middlewares.GuestMiddleware)
 	auth.RegisterAuthRoutes(authGroup)
+
+	profileGroup := app.Group("/profile", middlewares.AuthMiddleware)
+	profile_controller.RegisterProfileRoutes(profileGroup)
+
+	dashboardGroup := app.Group("/dashboard", middlewares.AuthMiddleware)
+	dashboard_controller.RegisterDashboardController(dashboardGroup)
 
 	workspaceGroup := app.Group("/workspaces", middlewares.AuthMiddleware)
 	workspace_controller.RegisterWorkspaceControllers(workspaceGroup)

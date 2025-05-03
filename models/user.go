@@ -3,6 +3,7 @@ package models
 import (
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -12,10 +13,24 @@ type User struct {
 	FirstName  string
 	LastName   string
 	Provider   *string
-	Email      string
+	Email      string `gorm:"unique;not null"`
+	Password   *string
 	Avatar     *string
 	Workspaces []*Workspace `gorm:"many2many:user_workspaces;"`
 	Teams      []*Team      `gorm:"many2many:team_users;"`
+}
+
+func GeneratePasswordHash(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
 }
 
 func AddNewUser(db *gorm.DB, user User) (*User, error) {

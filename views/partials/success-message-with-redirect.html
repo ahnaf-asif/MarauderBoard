@@ -1,0 +1,11 @@
+{{ define "partials/success-message-with-redirect"}}
+
+<div class="text-green-500 font-semibold">{{ .Message }}</div>
+
+<script>
+  setTimeout(function () {
+    window.location.href = "{{.Redirect}}";
+  }, 1500);
+</script>
+
+{{end}}
