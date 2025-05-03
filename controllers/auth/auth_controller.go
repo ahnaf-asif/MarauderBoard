@@ -12,20 +12,69 @@ import (
 )
 
 func RegisterAuthRoutes(auth fiber.Router) {
-	auth.Get("/logout", func(ctx *fiber.Ctx) error {
-		if err := goth_fiber.Logout(ctx); err != nil {
-			log.Fatal(err)
+	auth.Get("/login", func(ctx *fiber.Ctx) error {
+		return ctx.Render("auth/login", fiber.Map{})
+	})
+
+	auth.Post("/login", func(ctx *fiber.Ctx) error {
+		email := ctx.FormValue("email")
+		password := ctx.FormValue("password")
+
+		if email == "" || password == "" {
+			return ctx.Render("partials/error-message", "all fields are required")
 		}
-		return ctx.Redirect("/", fiber.StatusFound)
+
+		user, err := models.GetUserByEmail(database.DB, email)
+		if err != nil {
+			log.Println("Error getting user by email:", err)
+			return ctx.Render("partials/error-message", "Invalid email or password")
+		}
+
+		if *user.Provider == "google" {
+			return ctx.Render("partials/error-message", "This account is registered with Google. Please login with Google.")
+		}
+
+		if models.CheckPasswordHash(password, *user.Password) {
+			log.Println("Error checking password hash:", err)
+			return ctx.Render("partials/error-message", "Invalid email or password")
+		}
+
+		user_data := UserSessionData{
+			ID:        user.ID,
+			Email:     user.Email,
+			FirstName: user.FirstName,
+			LastName:  user.LastName,
+			Provider:  *user.Provider,
+			Avatar:    *user.Avatar,
+		}
+
+		user_data_json, err := json.Marshal(user_data)
+		if err != nil {
+			log.Println("Error marshalling user data:", err)
+			return ctx.Render("partials/error-message", "Invalid email or password")
+		}
+
+		if err := goth_fiber.StoreInSession(
+			"user_data", string(user_data_json), ctx,
+		); err != nil {
+			log.Println("Error storing user session:", err)
+			return ctx.Render("partials/error-message", "Invalid email or password")
+		} else {
+			log.Println("User data stored in session:", string(user_data_json))
+		}
+
+		redirect_uri := ctx.Cookies("redirect_uri")
+		if redirect_uri == "" {
+			redirect_uri = "/"
+		}
+
+		return ctx.Render("partials/success-message-with-redirect", fiber.Map{
+			"Message":  "Login successful! Redirecting...",
+			"Redirect": redirect_uri,
+		})
 	})
 
 	auth.Get("/register", func(ctx *fiber.Ctx) error {
-		_, err := goth_fiber.GetFromSession("user_data", ctx)
-		if err != nil {
-			return ctx.Render("auth/register", fiber.Map{
-				"User": nil,
-			})
-		}
 		return ctx.Redirect("/", fiber.StatusFound)
 	})
 
@@ -116,11 +165,7 @@ func RegisterAuthRoutes(auth fiber.Router) {
 	})
 
 	auth.Get(":provider", func(ctx *fiber.Ctx) error {
-		_, err := goth_fiber.GetFromSession("user_data", ctx)
-		if err != nil {
-			return goth_fiber.BeginAuthHandler(ctx)
-		}
-		return ctx.Redirect("/", fiber.StatusFound)
+		return goth_fiber.BeginAuthHandler(ctx)
 	})
 
 	auth.Get(":provider/callback", func(ctx *fiber.Ctx) error {

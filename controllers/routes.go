@@ -11,6 +11,7 @@ import (
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/middlewares"
 	"github.com/gofiber/fiber/v2"
+	"github.com/shareed2k/goth_fiber"
 )
 
 func RegisterRoutes(app *fiber.App) {
@@ -26,7 +27,14 @@ func RegisterRoutes(app *fiber.App) {
 		return ctx.Render("index", fiber.Map{}, "layouts/main")
 	})
 
-	authGroup := app.Group("/auth")
+	app.Get("/auth/logout", func(ctx *fiber.Ctx) error {
+		if err := goth_fiber.Logout(ctx); err != nil {
+			log.Fatal(err)
+		}
+		return ctx.Redirect("/", fiber.StatusFound)
+	})
+
+	authGroup := app.Group("/auth", middlewares.GuestMiddleware)
 	auth.RegisterAuthRoutes(authGroup)
 
 	profileGroup := app.Group("/profile", middlewares.AuthMiddleware)
