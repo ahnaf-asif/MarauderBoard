@@ -5,6 +5,7 @@ import (
 
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/services"
+	load_locals "github.com/ahnafasif/MarauderBoard/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -55,14 +56,13 @@ func RegisterAiControllers(app fiber.Router) {
 	})
 
 	app.Get("/chat", func(ctx *fiber.Ctx) error {
-		user, _ := helpers.GetAuthUserSessionData(ctx)
 		session_id := services.GetOrCreateOllamaSession(ctx)
 		messages := services.GetMessages(session_id)
 
-		return ctx.Render("ai/chat", fiber.Map{
-			"PageTitle": "AI Chat",
-			"User":      user,
-			"Messages":  messages,
-		}, "layouts/dashboard")
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = "AI Chat"
+		data["Messages"] = messages
+
+		return ctx.Render("ai/chat", data, "layouts/dashboard")
 	})
 }

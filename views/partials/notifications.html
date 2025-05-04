@@ -1,0 +1,89 @@
+{{ define "partials/notifications" }}
+<div x-data="{ notifOpen: false }" class="relative">
+  <button @click="notifOpen = !notifOpen" class="relative focus:outline-none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-6 w-6 text-gray-700 hover:text-indigo-600"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 8 7.388 8 8.75V14.158c0 .538-.214 1.055-.595 1.437L6 17h5m4 0v1a3 3 0 11-6 0v-1m6 0H9"
+      />
+    </svg>
+
+    {{ if gt .UnseenCount 0 }}
+    <span
+      id="notif-counter"
+      class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+    >
+      {{ .UnseenCount }}
+    </span>
+    {{ end }}
+  </button>
+
+  <div
+    x-show="notifOpen"
+    @click.away="notifOpen = false"
+    x-transition
+    class="absolute right-0 mt-2 w-96 bg-white rounded-md shadow-lg z-50"
+  >
+    <div class="text-sm text-gray-700 max-h-72 overflow-y-auto">
+      {{ if .UnseenNotifications }}
+      <ul>
+        {{ range .UnseenNotifications }}
+        <li
+          id="notif-{{ .ID }}"
+          class="border-b last:border-none hover:bg-gray-100"
+        >
+          <div class="px-2 py-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <a
+                  href="{{ if .Link }}{{ .Link }}{{ else }}#{{ end }}"
+                  class="block font-medium"
+                  >{{ .Title }}</a
+                >
+                <p class="text-sm text-gray-500">{{ .Body }}</p>
+              </div>
+              <button
+                hx-post="/notifications/{{ .ID }}/mark-read"
+                hx-swap="outerHTML"
+                hx-target="#notif-{{ .ID }}"
+                hx-on:htmx:before-request="updateNotifCounter()"
+                class="text-xs text-blue-600 hover:underline ml-2 mt-1"
+              >
+                Mark read
+              </button>
+            </div>
+          </div>
+        </li>
+        {{ end }}
+      </ul>
+      {{ else }}
+      <p class="text-center text-gray-400">No new notifications</p>
+      {{ end }}
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateNotifCounter() {
+    console.log("updating notification counter");
+    const counter = document.getElementById("notif-counter");
+    if (!counter) return;
+    let count = parseInt(counter.textContent.trim());
+    if (isNaN(count)) return;
+    count = Math.max(0, count - 1);
+    if (count === 0) {
+      counter.remove();
+    } else {
+      counter.textContent = count;
+    }
+  }
+</script>
+{{ end }}

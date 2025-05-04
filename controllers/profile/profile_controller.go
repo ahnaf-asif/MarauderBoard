@@ -6,20 +6,14 @@ import (
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
+	load_locals "github.com/ahnafasif/MarauderBoard/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
 func RegisterProfileRoutes(app fiber.Router) {
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		user, err := helpers.GetAuthUserSessionData(ctx)
-		if err != nil {
-			log.Println("User not found")
-			return ctx.Redirect("/")
-		}
-
-		return ctx.Render("profile", fiber.Map{
-			"User": user,
-		}, "layouts/main")
+		data := load_locals.LoadLocals(ctx)
+		return ctx.Render("profile", data, "layouts/main")
 	})
 
 	app.Post("/update", func(ctx *fiber.Ctx) error {
