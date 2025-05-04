@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/ahnafasif/MarauderBoard/database"
-	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
 	load_locals "github.com/ahnafasif/MarauderBoard/utils"
 	"github.com/gofiber/fiber/v2"

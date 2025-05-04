@@ -59,7 +59,7 @@
           <div class="text-xl font-semibold">Dashboard</div>
           {{end}}
           <div class="flex items-center space-x-4">
-            {{ if .User.Email }} {{ template "partials/notifications" .}}
+            {{ if .User.Email }}
             <div x-data="{ open: false }" class="relative">
               <button
                 @click="open = !open"
@@ -90,7 +90,7 @@
                 >
               </div>
             </div>
-            {{ else }}
+            {{ template "partials/notifications" .}} {{ else }}
             <a
               href="/auth/google"
               class="inline-flex items-center px-4 py-2 bg-white text-sm font-medium text-gray-700 border border-gray-300 rounded hover:bg-gray-50"
