@@ -7,6 +7,7 @@ import (
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
+	load_locals "github.com/ahnafasif/MarauderBoard/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -29,13 +30,12 @@ func RegisterProjectControllers(app fiber.Router) {
 			})
 		}
 
-		user, _ := helpers.GetAuthUserSessionData(ctx)
-		return ctx.Render("projects/all-projects", fiber.Map{
-			"PageTitle": "All Projects",
-			"User":      user,
-			"Workspace": workspace,
-			"Projects":  projects,
-		}, "layouts/workspace")
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = "All Projects"
+		data["Workspace"] = workspace
+		data["Projects"] = projects
+
+		return ctx.Render("projects/all-projects", data, "layouts/workspace")
 	})
 
 	app.Get("/create", func(ctx *fiber.Ctx) error {
@@ -49,11 +49,9 @@ func RegisterProjectControllers(app fiber.Router) {
 			})
 		}
 
-		user, _ := helpers.GetAuthUserSessionData(ctx)
-		return ctx.Render("projects/create", fiber.Map{
-			"User":      user,
-			"Workspace": workspace,
-		})
+		data := load_locals.LoadLocals(ctx)
+		data["Workspace"] = workspace
+		return ctx.Render("projects/create", data)
 	})
 
 	app.Post("/create", func(ctx *fiber.Ctx) error {
@@ -99,11 +97,11 @@ func RegisterProjectControllers(app fiber.Router) {
 			})
 		}
 
-		user, _ := helpers.GetAuthUserSessionData(ctx)
-		return ctx.Render("projects/dashboard", fiber.Map{
-			"User":      user,
-			"Project":   project,
-			"Workspace": workspace,
-		}, "layouts/project")
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = project.Name
+		data["Project"] = project
+		data["Workspace"] = workspace
+
+		return ctx.Render("projects/dashboard", data, "layouts/project")
 	})
 }

@@ -6,6 +6,7 @@ import (
 	ai_controller "github.com/ahnafasif/MarauderBoard/controllers/ai"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
 	dashboard_controller "github.com/ahnafasif/MarauderBoard/controllers/dashboard"
+	notifications_controller "github.com/ahnafasif/MarauderBoard/controllers/notifications"
 	profile_controller "github.com/ahnafasif/MarauderBoard/controllers/profile"
 	"github.com/ahnafasif/MarauderBoard/controllers/workspace"
 	"github.com/ahnafasif/MarauderBoard/helpers"
@@ -48,4 +49,7 @@ func RegisterRoutes(app *fiber.App) {
 
 	aiGroup := app.Group("/ai", middlewares.AuthMiddleware)
 	ai_controller.RegisterAiControllers(aiGroup)
+
+	notificationsGroup := app.Group("/notifications", middlewares.AuthMiddleware)
+	notifications_controller.RegisterNotificationController(notificationsGroup)
 }

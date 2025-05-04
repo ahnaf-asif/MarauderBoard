@@ -18,8 +18,11 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/fasthttp/websocket v1.5.10 // indirect
 	github.com/go-chi/chi/v5 v5.1.0 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
+	github.com/gofiber/contrib/socketio v1.1.5 // indirect
+	github.com/gofiber/contrib/websocket v1.3.4 // indirect
 	github.com/gofiber/storage/memory v1.3.4 // indirect
 	github.com/gofiber/storage/redis v1.3.4 // indirect
 	github.com/gofiber/template v1.8.3 // indirect
@@ -42,14 +45,16 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/redis/go-redis/v9 v9.0.2 // indirect
-	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/shareed2k/goth_fiber v0.3.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
-	github.com/valyala/fasthttp v1.51.0 // indirect
+	github.com/valyala/fasthttp v1.56.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/yuin/goldmark v1.7.10 // indirect
 	github.com/yuin/goldmark-highlighting v0.0.0-20220208100518-594be1970594 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect

@@ -59,7 +59,7 @@
           <div class="text-xl font-semibold">Dashboard</div>
           {{end}}
           <div class="flex items-center space-x-4">
-            {{ if .User.Email }}
+            {{ if .User.Email }} {{ template "partials/notifications" .}}
             <div x-data="{ open: false }" class="relative">
               <button
                 @click="open = !open"

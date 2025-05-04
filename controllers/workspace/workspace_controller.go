@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/ahnafasif/MarauderBoard/controllers/auth"
 	"github.com/ahnafasif/MarauderBoard/controllers/project"
+	team_controller "github.com/ahnafasif/MarauderBoard/controllers/team"
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
+	load_locals "github.com/ahnafasif/MarauderBoard/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,19 +18,23 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 	projectGroup := app.Group("/:workspace_id/projects")
 	project_controller.RegisterProjectControllers(projectGroup)
 
+	teamGroup := app.Group("/:workspace_id/teams")
+	team_controller.RegisterTeamController(teamGroup)
+
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		user, _ := helpers.GetAuthUserSessionData(ctx)
+		data := load_locals.LoadLocals(ctx)
+		user := data["User"].(auth.UserSessionData)
+
 		workspaces, err := models.GetAllWorkspacesByUserId(database.DB, user.ID)
 		if err != nil {
 			return ctx.Status(fiber.ErrInternalServerError.Code).JSON(fiber.Map{
 				"error": "Failed to fetch workspaces",
 			})
 		}
-		return ctx.Render("workspaces/all-workspaces", fiber.Map{
-			"PageTitle":  "My Workspaces",
-			"Workspaces": workspaces,
-			"User":       user,
-		}, "layouts/dashboard")
+
+		data["PageTitle"] = "My Workspaces"
+		data["Workspaces"] = workspaces
+		return ctx.Render("workspaces/all-workspaces", data, "layouts/dashboard")
 	})
 
 	app.Get("/get-started", func(ctx *fiber.Ctx) error {
@@ -69,7 +76,6 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 
 	app.Get("/:id/dashboard", func(ctx *fiber.Ctx) error {
 		id := ctx.Params("id")
-		user, _ := helpers.GetAuthUserSessionData(ctx)
 		if id == "" {
 			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
 				"error": "Workspace ID is required",
@@ -90,10 +96,10 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 			})
 		}
 
-		return ctx.Render("workspaces/dashboard", fiber.Map{
-			"PageTitle": "Dashboard",
-			"Workspace": workspace,
-			"User":      user,
-		}, "layouts/workspace")
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = "Dashboard"
+		data["Workspace"] = workspace
+
+		return ctx.Render("workspaces/dashboard", data, "layouts/workspace")
 	})
 }
