@@ -9,13 +9,13 @@ type Team struct {
 
 	Name        string
 	Workspace   Workspace `gorm:"foreignKey:WorkspaceId"`
-	WorkspaceId int
+	WorkspaceId uint
 	Leader      User `gorm:"foreignKey:LeaderId"`
-	LeaderId    int
+	LeaderId    uint
 	Users       []*User    `gorm:"many2many:team_users;"`
 	Projects    []*Project `gorm:"many2many:team_projects;"`
 	ChatGroup   *ChatGroup `gorm:"foreignKey:ChatGroupId"`
-	ChatGroupId int
+	ChatGroupId uint
 }
 
 func AddNewTeam(db *gorm.DB, team *Team) (*Team, error) {
@@ -37,12 +37,13 @@ func GetTeamById(db *gorm.DB, id int) (*Team, error) {
 	return team, nil
 }
 
-func GetTeamsByWorkspaceId(db *gorm.DB, workspaceId int) ([]*Team, error) {
+func GetTeamsByWorkspaceId(db *gorm.DB, workspaceId uint) ([]*Team, error) {
 	teams := []*Team{}
 	if err := db.Preload("Leader").
 		Preload("Users").
 		Preload("Projects").
 		Preload("ChatGroup").
+		Preload("Workspace").
 		Where("workspace_id = ?", workspaceId).
 		Find(&teams).Error; err != nil {
 		return nil, err

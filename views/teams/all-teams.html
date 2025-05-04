@@ -1,0 +1,71 @@
+{{ define "workspace/teams" }}
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-semibold text-gray-800">Teams</h2>
+    {{ if eq .Workspace.Administrator.ID .User.ID }}
+    <a
+      href="/workspaces/{{ .Workspace.ID }}/teams/new"
+      class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+    >
+      + Create Team
+    </a>
+    {{end }}
+  </div>
+  {{ $ctx := . }} {{ if .Teams }}
+  <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+    {{ range .Teams }}
+    <div
+      id="team-{{ .ID }}"
+      class="bg-white shadow rounded-lg p-5 border border-gray-200 flex flex-col justify-between"
+    >
+      <div class="space-y-2">
+        <h3 class="text-lg font-bold text-indigo-700">{{ .Name }}</h3>
+        <p class="text-sm text-gray-500">
+          <strong>Leader:</strong> {{ .Leader.FirstName }} {{ .Leader.LastName}}
+        </p>
+        <p class="text-sm text-gray-500">
+          <strong>Members:</strong> {{ len .Users }}
+        </p>
+        <p class="text-sm text-gray-500">
+          <strong>Projects:</strong> {{ len .Projects }}
+        </p>
+        {{ if .ChatGroup }}
+        <a
+          href="/chat/groups/{{ .ChatGroup.ID }}"
+          class="inline-block text-indigo-600 text-sm hover:underline"
+        >
+          Open Chat
+        </a>
+        {{ end }}
+      </div>
+
+      {{if eq $ctx.Workspace.Administrator.ID $ctx.User.ID}}
+      <div class="mt-4 flex justify-end gap-2">
+        <a
+          href="/teams/{{ .ID }}/edit"
+          class="text-sm text-gray-600 hover:text-indigo-600"
+        >
+          Edit
+        </a>
+        <button
+          hx-delete="/teams/{{ .ID }}"
+          hx-target="#team-{{ .ID }}"
+          hx-swap="outerHTML"
+          class="text-sm text-red-600 hover:underline"
+        >
+          Delete
+        </button>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+  {{ else }}
+  <div class="text-center text-gray-500 mt-10">
+    <p>No teams found. Create one to get started!</p>
+  </div>
+  {{ end }}
+</div>
+
+{{ end }}
