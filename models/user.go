@@ -50,6 +50,22 @@ func GetUserByEmail(db *gorm.DB, email string) (*User, error) {
 	return &user, nil
 }
 
+func GetUserById(db *gorm.DB, id uint) (*User, error) {
+	var user User
+	if err := db.Preload("Workspaces").Preload("Teams").First(&user, id).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func GetAllUsers(db *gorm.DB) ([]*User, error) {
+	var users []*User
+	if err := db.Find(&users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
+}
+
 func UpdateUser(db *gorm.DB, user *User) (*User, error) {
 	if err := db.Save(user).Error; err != nil {
 		return nil, err

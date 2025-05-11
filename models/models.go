@@ -10,5 +10,6 @@ func GetModels() []interface{} {
 		&ChatMessage{},
 		&Task{},
 		&Comment{},
+		&Notification{},
 	}
 }

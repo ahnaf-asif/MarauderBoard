@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"encoding/json"
-	"log"
 
 	"github.com/ahnafasif/MarauderBoard/configs"
 	"github.com/ahnafasif/MarauderBoard/controllers/auth"
@@ -37,9 +36,6 @@ func GetAuthUserSessionData(ctx *fiber.Ctx) (auth.UserSessionData, error) {
 	if err := json.Unmarshal([]byte(user_data_json), &user_data); err != nil {
 		return user_data, err
 	}
-
-	log.Println("User data in goth session: ", user_data)
-
 	return user_data, nil
 }
 
@@ -56,8 +52,6 @@ func SetAuthUserSessionData(
 	); err != nil {
 		return new_session_data, err
 	}
-
-	log.Println("User data in goth session: ", new_session_data)
 
 	return new_session_data, nil
 }

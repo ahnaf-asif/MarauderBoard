@@ -1,0 +1,24 @@
+{{ define "partials/teams/user" }}
+<tr class="text-sm">
+  <td class="px-4 py-2 font-medium text-gray-900">
+    {{ .TeamUser.FirstName }} {{ .TeamUser.LastName }}
+  </td>
+  <td class="px-4 py-2 text-gray-700">{{ .TeamUser.Email }}</td>
+  <td class="px-4 py-2">
+    {{ if and (ne .TeamUser.ID .User.ID) (ne .TeamUser.ID .Team.Leader.ID) }}
+    <form
+      hx-delete="/workspace/{{.Workspace.ID}}/teams/{{.Team.ID}}/users/{{.TeamUser.ID}}"
+      hx-confirm="Are you sure you want to remove this user?"
+      hx-target="closest tr"
+      hx-swap="outerHTML"
+    >
+      <button type="submit" class="text-red-600 hover:text-red-800 font-medium">
+        Remove
+      </button>
+    </form>
+    {{ else }}
+    <span class="text-gray-400">---</span>
+    {{ end }}
+  </td>
+</tr>
+{{ end }}

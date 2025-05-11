@@ -1,0 +1,28 @@
+{{ define "notifications/index" }}
+
+<div>Notifications</div>
+
+<script>
+  const socket = io("http://localhost:42069/ws/notifications/{{ .User.ID }}");
+  console.log(socket);
+
+  socket.on("connect", () => {
+    console.log("Connected");
+  });
+
+  socket.on("message", (data) => {
+    const notification = JSON.parse(data);
+    console.log("New Notification:", notification);
+  });
+
+  function sendTestNotification() {
+    socket.emit("NOTIFY", {
+      title: "New Task",
+      body: "You have a new task assigned.",
+      user_id: 3,
+      link: "/tasks/42",
+    });
+  }
+</script>
+
+{{ end }}
