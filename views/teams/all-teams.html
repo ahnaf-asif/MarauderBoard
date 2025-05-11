@@ -10,7 +10,7 @@
     >
       + Create Team
     </a>
-    {{end }}
+    {{ end }}
   </div>
   {{ $ctx := . }} {{ if .Teams }}
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -40,14 +40,16 @@
         {{ end }}
       </div>
 
-      {{if eq $ctx.Workspace.Administrator.ID $ctx.User.ID}}
       <div class="mt-4 flex justify-end gap-2">
         <a
-          href="/teams/{{ .ID }}/edit"
+          href="teams/{{ .ID }}"
           class="text-sm text-gray-600 hover:text-indigo-600"
         >
-          Edit
+          View
         </a>
+        {{if or (eq $ctx.Workspace.Administrator.ID $ctx.User.ID) (eq .Leader.Id
+        $ctx.User.ID)}}
+
         <button
           hx-delete="/teams/{{ .ID }}"
           hx-target="#team-{{ .ID }}"
@@ -56,8 +58,9 @@
         >
           Delete
         </button>
+
+        {{ end }}
       </div>
-      {{ end }}
     </div>
     {{ end }}
   </div>

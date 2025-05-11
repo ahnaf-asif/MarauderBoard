@@ -1,6 +1,9 @@
 package models
 
 import (
+	"fmt"
+	"log"
+
 	"gorm.io/gorm"
 )
 
@@ -12,7 +15,7 @@ type Project struct {
 	Status      string
 	Workspace   Workspace `gorm:"foreignKey:WorkspaceId"`
 	WorkspaceId int
-	Teams       []*Team `gorm:"many2many:team_projects;"`
+	Teams       []*Team `gorm:"many2many:team_projects;constraints:OnDelete: SET NULL;"`
 }
 
 func AddNewProject(db *gorm.DB, project *Project) (*Project, error) {
@@ -22,10 +25,11 @@ func AddNewProject(db *gorm.DB, project *Project) (*Project, error) {
 	return project, nil
 }
 
-func GetProjectById(db *gorm.DB, id int) (*Project, error) {
+func GetProjectById(db *gorm.DB, id uint) (*Project, error) {
 	project := &Project{}
 	if err := db.Preload("Workspace").
 		Preload("Teams").
+		Preload("Teams.Leader").
 		First(project, id).Error; err != nil {
 		return nil, err
 	}
@@ -80,41 +84,53 @@ func DeleteProjectById(db *gorm.DB, id int) error {
 	return nil
 }
 
-func AddTeamToProject(db *gorm.DB, projectId int, teamId int) error {
-	project := &Project{}
-	team := &Team{}
-
-	if err := db.First(project, projectId).Error; err != nil {
+func AddTeamToProject(db *gorm.DB, projectId uint, teamId uint) error {
+	if err := db.Exec("INSERT INTO team_projects (team_id, project_id) VALUES (?, ?)", teamId, projectId).Error; err != nil {
+		log.Println("Error adding team to project:", err)
 		return err
 	}
 
-	if err := db.First(team, teamId).Error; err != nil {
-		return err
-	}
+	team, _ := GetTeamById(db, teamId)
+	project, _ := GetProjectById(db, projectId)
 
-	if err := db.Model(project).Association("Teams").Append(team); err != nil {
-		return err
+	for _, user := range team.Users {
+		link := fmt.Sprintf("/workspaces/%d/projects/%d/teams", project.WorkspaceId, project.ID)
+		notification := &Notification{
+			UserId: user.ID,
+			Title:  "Team Added to Project",
+			Body:   "Your team " + team.Name + " has been added to the project " + project.Name,
+			Seen:   false,
+			Link:   &link,
+		}
+		if _, err := AddNotification(db, notification); err != nil {
+			log.Println("Error adding notification:", err)
+			return err
+		}
 	}
-
 	return nil
 }
 
-func RemoveTeamFromProject(db *gorm.DB, projectId int, teamId int) error {
-	project := &Project{}
-	team := &Team{}
-
-	if err := db.First(project, projectId).Error; err != nil {
+func RemoveTeamFromProject(db *gorm.DB, projectId uint, teamId uint) error {
+	if err := db.Exec("DELETE FROM team_projects WHERE team_id = ? AND project_id = ?", teamId, projectId).Error; err != nil {
+		log.Println("Error removing team from project:", err)
 		return err
 	}
 
-	if err := db.First(team, teamId).Error; err != nil {
-		return err
-	}
+	team, _ := GetTeamById(db, teamId)
+	project, _ := GetProjectById(db, projectId)
 
-	if err := db.Model(project).Association("Teams").Delete(team); err != nil {
-		return err
+	for _, user := range team.Users {
+		notification := &Notification{
+			UserId: user.ID,
+			Title:  "Team Removed from Project",
+			Body:   "Your team " + team.Name + " has been removed from the project " + project.Name,
+			Seen:   false,
+			Link:   nil,
+		}
+		if _, err := AddNotification(db, notification); err != nil {
+			log.Println("Error adding notification:", err)
+		}
 	}
-
 	return nil
 }
 

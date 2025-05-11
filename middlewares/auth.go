@@ -1,8 +1,6 @@
 package middlewares
 
 import (
-	"log"
-
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/models"
@@ -23,16 +21,12 @@ func AuthMiddleware(ctx *fiber.Ctx) error {
 		return ctx.Redirect("/auth/login")
 	}
 
-	log.Println("User id: ", user.ID)
-
 	unseen_notifications, err := models.GetUnseenNotificationsByUserId(database.DB, user.ID)
 	if err != nil {
 		unseen_notifications = []*models.Notification{}
 	}
 
 	total_unseen_notifications := len(unseen_notifications)
-
-	log.Println("Unseen notifications: ", unseen_notifications)
 
 	ctx.Locals("User", user)
 	ctx.Locals("UnseenCount", total_unseen_notifications)

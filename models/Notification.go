@@ -41,8 +41,6 @@ func GetUnseenNotificationsByUserId(db *gorm.DB, userId uint) ([]*Notification, 
 		return nil, err
 	}
 
-	log.Println("Unseen notifications:", notifications)
-
 	return notifications, nil
 }
 

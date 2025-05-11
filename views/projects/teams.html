@@ -1,0 +1,97 @@
+{{ define "projects/teams" }}
+<div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-6 space-y-10">
+  {{ if eq .User.ID .Workspace.Administrator.ID }}
+  <div>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">
+      Add Team to Project
+    </h2>
+    {{ if .Available_Teams }}
+    <form
+      hx-post="teams/add"
+      hx-target="#project-teams"
+      hx-swap="outerHTML"
+      class="mb-4 flex space-x-2 items-end"
+    >
+      <div class="flex-1">
+        <select
+          id="team_id"
+          name="team_id"
+          class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          required
+        >
+          <option value="">Select a team</option>
+          {{ range .Available_Teams }}
+          <option value="{{ .ID }}">{{ .Name }}</option>
+          {{ end }}
+        </select>
+      </div>
+      <button
+        type="submit"
+        class="px-4 py-2 rounded-md bg-green-600 text-white hover:bg-green-700 text-sm font-medium"
+      >
+        Add Team
+      </button>
+    </form>
+    {{ else }}
+    <p class="text-sm text-gray-500 mb-4">No available teams to add.</p>
+    {{ end }}
+  </div>
+  {{ end }}
+  <div id="project-teams"></div>
+
+  <div>
+    <h2 class="text-xl font-semibold text-gray-800 mb-4">Project Teams</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
+        <thead class="bg-gray-100 text-gray-700 text-sm">
+          <tr>
+            <th class="px-4 py-2 text-left font-medium">Team Name</th>
+            <th class="px-4 py-2 text-left font-medium">Leader</th>
+            <th class="px-4 py-2 text-left font-medium">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-100 text-sm">
+          {{ range .Project.Teams }}
+          <tr>
+            <td class="px-4 py-2 font-medium text-gray-900">{{ .Name }}</td>
+            <td class="px-4 py-2 text-gray-700">
+              {{ .Leader.FirstName }} {{ .Leader.LastName }}
+            </td>
+            <td class="px-4 py-2">
+              <div class="flex gap-2 justify-flex-begin space-around">
+                <a
+                  class="text-indigo-500"
+                  href="/workspaces/{{$.Workspace.ID}}/teams/{{.ID}}"
+                  >View</a
+                >
+                {{ if eq $.User.ID $.Workspace.Administrator.ID }}
+                <form
+                  hx-delete="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/teams/remove/{{.ID}}"
+                  hx-confirm="Are you sure you want to remove this team?"
+                  hx-target="closest tr"
+                  hx-swap="outerHTML"
+                >
+                  <button
+                    type="submit"
+                    class="text-red-600 hover:text-red-800 font-medium"
+                  >
+                    Remove
+                  </button>
+                </form>
+                {{ end }}
+              </div>
+            </td>
+          </tr>
+          {{ else }}
+          <tr>
+            <td colspan="3" class="px-4 py-4 text-center text-gray-500">
+              No teams found.
+            </td>
+          </tr>
+          {{ end }}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{{ end }}
