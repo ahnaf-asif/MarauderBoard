@@ -2,7 +2,6 @@ package project_controller
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/ahnafasif/MarauderBoard/database"
@@ -130,8 +129,6 @@ func RegisterProjectControllers(app fiber.Router) {
 				"error": "Failed to fetch teams",
 			})
 		}
-
-		log.Println("Available Teams(in project): ", available_teams)
 
 		data := load_locals.LoadLocals(ctx)
 		data["PageTitle"] = project.Name
