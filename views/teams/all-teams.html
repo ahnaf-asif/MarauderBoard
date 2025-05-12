@@ -47,8 +47,7 @@
         >
           View
         </a>
-        {{if or (eq $ctx.Workspace.Administrator.ID $ctx.User.ID) (eq .Leader.Id
-        $ctx.User.ID)}}
+        {{if eq $ctx.Workspace.Administrator.ID $ctx.User.ID}}
 
         <button
           hx-delete="/teams/{{ .ID }}"

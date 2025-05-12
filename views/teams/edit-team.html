@@ -1,7 +1,7 @@
 {{ define "workspaces/team/edit" }}
 <div class="max-w-3xl mx-auto bg-white shadow rounded-lg p-6 space-y-10">
-  {{ if or (eq .Workspace.Administrator.ID .User.ID) (eq
-  .Team.Leader.ID.User.ID) }}
+  {{ if or (eq .Workspace.Administrator.ID .User.ID) (eq .Team.Leader.ID
+  .User.ID) }}
   <div>
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Edit Team</h2>
     <form
@@ -45,7 +45,8 @@
 
   <div>
     <h2 class="text-xl font-semibold text-gray-800 mb-4">Team Members</h2>
-    {{ if or (eq .Workspace.Administrator.ID .User.ID) (eq .Team.Leader.ID) }}
+    {{ if or (eq .Workspace.Administrator.ID .User.ID) (eq .Team.Leader.ID
+    .User.ID) }}
     <form
       hx-post="/workspaces/{{$.Workspace.ID}}/teams/{{$.Team.ID}}/users/add"
       hx-target="tbody"
