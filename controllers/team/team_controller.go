@@ -26,6 +26,9 @@ func RegisterTeamController(app fiber.Router) {
 		data["Workspace"] = workspace
 
 		teams, err := models.GetTeamsByWorkspaceId(database.DB, workspace.ID)
+		for _, team := range teams {
+			log.Println("Team: ", team.Leader.Email, team.Leader.ID)
+		}
 		if err != nil {
 			return ctx.Status(500).SendString("Error getting teams")
 		}

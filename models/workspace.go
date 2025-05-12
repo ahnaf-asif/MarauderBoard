@@ -11,9 +11,9 @@ type Workspace struct {
 	Description     string
 	Administrator   *User `gorm:"constraint:OnDelete:SET NULL;foreignKey:AdministratorId;references:ID"`
 	AdministratorId *uint
-	Users           []*User    `gorm:"many2many:user_workspaces;"`
-	Teams           []*Team    `gorm:"foreignKey:WorkspaceId"`
-	Projects        []*Project `gorm:"foreignKey:WorkspaceId"`
+	Users           []*User    `gorm:"many2many:user_workspaces;constraint:OnDelete:SET NULL;"`
+	Teams           []*Team    `gorm:"foreignKey:WorkspaceId;constraint:OnDelete:SET NULL;"`
+	Projects        []*Project `gorm:"foreignKey:WorkspaceId;constraint:OnDelete:SET NULL;"`
 	ChatGroup       *ChatGroup `gorm:"constraing:foreignKey:ChatGroupId;OnDelete:Set NULL;"`
 	ChatGroupId     *uint
 }
