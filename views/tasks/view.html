@@ -1,0 +1,80 @@
+{{ define "tasks/view" }}
+<div class="max-w-4xl mx-auto px-6 py-10 space-y-8">
+  {{ if .Task }}
+  <!-- Task Header -->
+  <div class="bg-white rounded-lg shadow p-6 space-y-4">
+    <div class="flex items-center justify-between">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-1">{{ .Task.Name }}</h2>
+        <p class="text-sm text-gray-500">Task ID: #{{ .Task.ID }}</p>
+      </div>
+      <span
+        class='inline-block text-xs font-semibold px-3 py-1 rounded-full
+  {{ if eq .Task.Status "Todo" }} bg-gray-100 text-gray-700
+  {{ else if eq .Task.Status "In Progress" }} bg-yellow-100 text-yellow-800
+  {{ else if eq .Task.Status "In Review" }} bg-purple-100 text-purple-800
+  {{ else if eq .Task.Status "Done" }} bg-green-100 text-green-800
+  {{ else if eq .Task.Status "Cancelled" }} bg-red-100 text-red-800
+  {{ else }} bg-gray-200 text-gray-700 {{ end }}'
+      >
+        {{ .Task.Status }}
+      </span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700">
+      <div>
+        <span class="font-medium text-gray-600">Project:</span>
+        <div>{{ .Project.Name }}</div>
+      </div>
+      <div>
+        <span class="font-medium text-gray-600">Workspace:</span>
+        <div>{{ .Workspace.Name }}</div>
+      </div>
+      <div>
+        <span class="font-medium text-gray-600">Team:</span>
+        <div>{{ .Task.Team.Name }}</div>
+      </div>
+      <div>
+        <span class="font-medium text-gray-600">Assignee:</span>
+        <div>
+          {{ if .Task.Assignee }} {{ .Task.Assignee.FirstName }} {{
+          .Task.Assignee.LastName }} {{ else }}
+          <span class="italic text-gray-400">Unassigned</span>
+          {{ end }}
+        </div>
+      </div>
+      <div>
+        <span class="font-medium text-gray-600">Reporter:</span>
+        <div>
+          {{ if .Task.Reporter }} {{ .Task.Reporter.FirstName }} {{
+          .Task.Reporter.LastName }} {{ else }}
+          <span class="italic text-gray-400">Unreported</span>
+          {{ end }}
+        </div>
+      </div>
+      <div>
+        <span class="font-medium text-gray-600">Created At:</span>
+        <div>{{ .Task.CreatedAt.Format "Jan 2, 2006 3:04 PM" }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Description Section -->
+  <div class="bg-white rounded-lg shadow p-6">
+    <h3 class="text-xl font-semibold text-gray-800 mb-4">Description</h3>
+    {{ if .Task.Description }}
+    <div class="text-gray-700 whitespace-pre-line leading-relaxed">
+      {{ .Description }}
+    </div>
+    {{ else }}
+    <p class="text-gray-400 italic">No description provided for this task.</p>
+    {{ end }}
+  </div>
+  <!-- Comments Section -->
+  {{ template "tasks/comments" .}} {{ else }}
+  <div class="text-red-500 font-semibold">
+    Error: Task not found or not loaded properly.
+  </div>
+  {{ end }}
+</div>
+{{ end }}

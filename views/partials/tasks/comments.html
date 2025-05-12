@@ -1,0 +1,113 @@
+{{ define "tasks/comments" }}
+<div class="mt-10">
+  <form
+    hx-post="comments/new"
+    hx-target="#comments-list"
+    hx-swap="afterbegin"
+    class="mb-6"
+  >
+    <textarea
+      name="content"
+      rows="3"
+      placeholder="Write a comment..."
+      class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none"
+      required
+    ></textarea>
+    <div class="mt-2 text-right">
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
+      >
+        Post Comment
+      </button>
+    </div>
+  </form>
+
+  <!-- Comments List -->
+  <div id="comments-list" class="space-y-6">
+    {{ range .Task.Comments }} {{ if not .ParentId }} {{ template "commentItem"
+    . }} {{ end }} {{ end }}
+  </div>
+</div>
+{{ end }} {{ define "commentItem" }}
+<div
+  class="flex space-x-4"
+  x-data="{ showReplyInput: false, showReplies: false }"
+>
+  <!-- Avatar -->
+  <img
+    src="{{ .User.Avatar }}"
+    alt="Avatar"
+    class="w-10 h-10 rounded-full object-cover border"
+  />
+
+  <!-- Comment Content -->
+  <div class="flex-1">
+    <div class="bg-gray-100 rounded-lg px-4 py-3">
+      <p class="text-sm text-gray-800 whitespace-pre-line">{{ .Content }}</p>
+    </div>
+    <div class="mt-1 text-xs text-gray-500">
+      Posted by {{ .User.FirstName }} {{ .User.LastName }} on {{
+      .CreatedAt.Format "Jan 2, 2006 3:04 PM" }}
+    </div>
+
+    <!-- Reply toggle link -->
+    <div class="mt-2">
+      <button
+        type="button"
+        class="text-xs text-blue-600 hover:underline"
+        @click="showReplyInput = !showReplyInput"
+      >
+        Reply
+      </button>
+    </div>
+
+    <!-- Reply form (hidden by default) -->
+    <form
+      class="mt-2"
+      x-show="showReplyInput"
+      hx-post="comments/reply/{{ .ID }}"
+      hx-target="#replies-for-{{ .ID }}"
+      hx-swap="afterbegin"
+    >
+      <textarea
+        name="content"
+        rows="1"
+        placeholder="Write a reply..."
+        class="w-full mt-2 p-2 border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-400"
+        required
+      ></textarea>
+      <div class="mt-1 text-right">
+        <button
+          type="submit"
+          class="bg-blue-500 text-white text-xs px-3 py-1 rounded hover:bg-blue-600"
+        >
+          Reply
+        </button>
+      </div>
+    </form>
+
+    <!-- Replies Toggle -->
+    {{ if .Replies }}
+    <div class="mt-2">
+      <button
+        type="button"
+        class="text-xs text-gray-600 hover:underline"
+        @click="showReplies = !showReplies"
+        x-text="showReplies ? 'Hide Replies' : 'View {{ len .Replies }} {{ if eq (len .Replies) 1 }}reply{{ else }}replies{{ end }}'"
+      ></button>
+    </div>
+    {{ end }}
+
+    <!-- Replies Container -->
+    <div
+      id="replies-for-{{ .ID }}"
+      x-show="showReplies"
+      x-collapse
+      class="mt-4 space-y-4 pl-8 border-l border-gray-300"
+    >
+      {{ range .Replies }} {{ template "commentItem" . }} {{ end }}
+    </div>
+  </div>
+</div>
+{{ end }}

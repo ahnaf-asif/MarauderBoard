@@ -9,10 +9,20 @@ type Comment struct {
 
 	Content  string
 	Task     Task `gorm:"foreignKey:TaskId"`
-	TaskId   int
+	TaskId   uint
 	User     User `gorm:"foreignKey:UserId"`
-	UserId   int
+	UserId   uint
 	Replies  []*Comment `gorm:"foreignKey:ParentId"`
 	Parent   *Comment   `gorm:"foreignKey:ParentId"`
-	ParentId *int
+	ParentId *uint
+}
+
+func AddNewComment(db *gorm.DB, comment *Comment) (*Comment, error) {
+	if err := db.Create(comment).Error; err != nil {
+		return nil, err
+	}
+	if err := db.Preload("User").First(comment, comment.ID).Error; err != nil {
+		return nil, err
+	}
+	return comment, nil
 }
