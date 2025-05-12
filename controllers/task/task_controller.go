@@ -28,7 +28,7 @@ func RegisterTaskController(app fiber.Router) {
 		data["Project"] = project
 		data["Workspace"] = workspace
 
-		return ctx.Render("tasks/new", data, "layouts/workspace")
+		return ctx.Render("tasks/new", data, "layouts/task")
 	})
 
 	app.Post("/new", func(ctx *fiber.Ctx) error {
@@ -108,7 +108,7 @@ func RegisterTaskController(app fiber.Router) {
 		data["Task"] = task
 		data["Description"] = template.HTML(rendered_description)
 
-		return ctx.Render("tasks/view", data, "layouts/project")
+		return ctx.Render("tasks/view", data, "layouts/task")
 	})
 
 	commentsController := app.Group("/:task_id/comments")
