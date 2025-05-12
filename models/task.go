@@ -11,13 +11,13 @@ type Task struct {
 	Description string
 	Status      string
 	Project     Project `gorm:"foreignKey:ProjectId"`
-	ProjectId   int
-	Assignee    User `gorm:"foreignKey:AssigneeId"`
-	AssigneeId  int
-	Reporter    User `gorm:"foreignKey:ReporterId"`
-	ReporterId  int
-	Team        Team `gorm:"foreignKey:TeamId"`
-	TeamId      int
+	ProjectId   *uint
+	Assignee    *User `gorm:"foreignKey:AssigneeId"`
+	AssigneeId  *uint
+	Reporter    *User `gorm:"foreignKey:ReporterId"`
+	ReporterId  *uint
+	Team        *Team `gorm:"foreignKey:TeamId"`
+	TeamId      *uint
 	Comments    []*Comment `gorm:"foreignKey:TaskId"`
 }
 
@@ -28,27 +28,56 @@ func AddNewTask(db *gorm.DB, task *Task) (*Task, error) {
 	return task, nil
 }
 
-func GetTaskById(db *gorm.DB, id int) (*Task, error) {
+func GetTaskById(db *gorm.DB, id uint) (*Task, error) {
 	task := &Task{}
 	if err := db.Preload("Project").
 		Preload("Assignee").
 		Preload("Reporter").
 		Preload("Team").
-		Preload("Comments").
 		First(task, id).Error; err != nil {
 		return nil, err
 	}
+
+	// Load all comments for this task in a flat list
+	var comments []*Comment
+	if err := db.Preload("User").
+		Where("task_id = ?", id).
+		Find(&comments).Error; err != nil {
+		return nil, err
+	}
+
+	// Build a comment ID → []*Reply map
+	commentMap := make(map[uint]*Comment)
+	for _, c := range comments {
+		c.Replies = []*Comment{} // initialize replies
+		commentMap[c.ID] = c
+	}
+
+	var rootComments []*Comment
+
+	for _, c := range comments {
+		if c.ParentId != nil {
+			parent := commentMap[*c.ParentId]
+			parent.Replies = append(parent.Replies, c)
+		} else {
+			rootComments = append(rootComments, c)
+		}
+	}
+
+	task.Comments = rootComments
 	return task, nil
 }
 
-func GetTasksByProjectId(db *gorm.DB, projectId int) ([]*Task, error) {
+func GetTasksByProjectId(db *gorm.DB, projectId uint) ([]*Task, error) {
 	tasks := []*Task{}
 	if err := db.Preload("Project").
 		Preload("Assignee").
 		Preload("Reporter").
 		Preload("Team").
+		Preload("Team.Users").
 		Preload("Comments").
 		Where("project_id = ?", projectId).
+		Order("created_at desc").
 		Find(&tasks).Error; err != nil {
 		return nil, err
 	}

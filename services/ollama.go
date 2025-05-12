@@ -57,6 +57,26 @@ func cleanOllamaResponse(content string) string {
 	return strings.ReplaceAll(content, "</think>", "")
 }
 
+func RefineText(model string, context string, description string) (string, error) {
+	messages := []Message{
+		{
+			Role:    "system",
+			Content: context,
+		},
+		{
+			Role:    "user",
+			Content: "Refine the following task description:\n\n" + description,
+		},
+	}
+
+	responseMsg, err := SendToOllama(model, messages)
+	if err != nil {
+		return "", err
+	}
+
+	return responseMsg.Content, nil
+}
+
 func SendToOllama(model string, messages []Message) (Message, error) {
 	payload := map[string]interface{}{
 		"model":    model,

@@ -2,8 +2,10 @@ package project_controller
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 
+	task_controller "github.com/ahnafasif/MarauderBoard/controllers/task"
 	"github.com/ahnafasif/MarauderBoard/database"
 	"github.com/ahnafasif/MarauderBoard/models"
 	load_locals "github.com/ahnafasif/MarauderBoard/utils"
@@ -11,6 +13,9 @@ import (
 )
 
 func RegisterProjectControllers(app fiber.Router) {
+	tasksGroup := app.Group("/:project_id/tasks")
+	task_controller.RegisterTaskController(tasksGroup)
+
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		workspaceId := ctx.Params("workspace_id")
 		workspaceIdInt, _ := strconv.Atoi(workspaceId)
@@ -130,6 +135,42 @@ func RegisterProjectControllers(app fiber.Router) {
 		data["Workspace"] = workspace
 
 		return ctx.Render("projects/settings", data, "layouts/project")
+	})
+
+	app.Get("/:id/backlog", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		workspace_id := ctx.Params("workspace_id")
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		workspace, err := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid workspace ID",
+			})
+		}
+		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
+		status_options := []string{"Todo", "In Progress", "In Review", "Done", "Cancelled"}
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = project.Name
+		data["Project"] = project
+		data["Workspace"] = workspace
+		data["Tasks"] = tasks
+		data["StatusOptions"] = status_options
+
+		// for all task, print task name, and then print names of task.Team.Users
+		for _, task := range tasks {
+			log.Println("Task Name:", task.Name)
+			log.Println("Total Users: ", len(task.Team.Users))
+		}
+		return ctx.Render("projects/backlog", data, "layouts/project")
 	})
 
 	app.Post("/:id/update", func(ctx *fiber.Ctx) error {
