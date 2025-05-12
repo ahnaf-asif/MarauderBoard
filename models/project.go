@@ -73,7 +73,7 @@ func DeleteProject(db *gorm.DB, project *Project) error {
 	return nil
 }
 
-func DeleteProjectById(db *gorm.DB, id int) error {
+func DeleteProjectById(db *gorm.DB, id uint) error {
 	project := &Project{}
 	if err := db.First(project, id).Error; err != nil {
 		return err
