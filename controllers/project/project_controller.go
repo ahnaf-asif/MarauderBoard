@@ -104,6 +104,85 @@ func RegisterProjectControllers(app fiber.Router) {
 		return ctx.Render("projects/dashboard", data, "layouts/project")
 	})
 
+	app.Get("/:id/settings", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		workspace_id := ctx.Params("workspace_id")
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		workspace, err := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid workspace ID",
+			})
+		}
+
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = project.Name
+		data["Project"] = project
+		data["Workspace"] = workspace
+
+		return ctx.Render("projects/settings", data, "layouts/project")
+	})
+
+	app.Post("/:id/update", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		name := ctx.FormValue("name")
+		description := ctx.FormValue("description")
+
+		project.Name = name
+		project.Description = description
+		err = database.DB.Save(project).Error
+		if err != nil {
+			return ctx.Status(fiber.ErrInternalServerError.Code).JSON(fiber.Map{
+				"error": "Failed to update project",
+			})
+		}
+
+		return ctx.Render("partials/success-message-with-disappear", fiber.Map{
+			"Message": "Project updated successfully",
+		})
+	})
+
+	app.Delete("/:id/delete", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		err = models.DeleteProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrInternalServerError.Code).JSON(fiber.Map{
+				"error": "Failed to delete project",
+			})
+		}
+		return ctx.Render("partials/success-message-with-redirect", fiber.Map{
+			"Message":  "Project deleted successfully",
+			"Redirect": fmt.Sprintf("/workspaces/%d/projects", project.WorkspaceId),
+		})
+	})
+
 	app.Get("/:id/teams", func(ctx *fiber.Ctx) error {
 		id := ctx.Params("id")
 		workspace_id := ctx.Params("workspace_id")
