@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"strconv"
+	"time"
 
 	comments_controller "github.com/ahnafasif/MarauderBoard/controllers/comment"
 	"github.com/ahnafasif/MarauderBoard/database"
@@ -43,12 +44,17 @@ func RegisterTaskController(app fiber.Router) {
 		project_id_uint := uint(project_id_int)
 		team_id_uint := uint(team_id_int)
 
+		start_date, _ := time.Parse("2006-01-02", ctx.FormValue("start_date"))
+		end_date, _ := time.Parse("2006-01-02", ctx.FormValue("end_date"))
+
 		task := &models.Task{
 			Name:        name,
 			Description: description,
 			ProjectId:   &project_id_uint,
 			TeamId:      &team_id_uint,
 			Status:      "Todo",
+			StartDate:   &start_date,
+			EndDate:     &end_date,
 		}
 		redirect := "/workspaces/" + ctx.Params("workspace_id") + "/projects/" + project_id + "/backlog"
 
@@ -109,6 +115,29 @@ func RegisterTaskController(app fiber.Router) {
 		data["Description"] = template.HTML(rendered_description)
 
 		return ctx.Render("tasks/view", data, "layouts/task")
+	})
+
+	app.Delete("/:task_id/delete", func(ctx *fiber.Ctx) error {
+		task_id := ctx.Params("task_id")
+		task_id_int, _ := strconv.Atoi(task_id)
+
+		task, err := models.GetTaskById(database.DB, uint(task_id_int))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid task ID",
+			})
+		}
+
+		err = models.DeleteTask(database.DB, task)
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid task ID",
+			})
+		}
+
+		return ctx.Render("partials/success-message-with-disappear", fiber.Map{
+			"Message": "Task deleted successfully",
+		})
 	})
 
 	commentsController := app.Group("/:task_id/comments")

@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -19,6 +21,9 @@ type Task struct {
 	Team        *Team `gorm:"foreignKey:TeamId"`
 	TeamId      *uint
 	Comments    []*Comment `gorm:"foreignKey:TaskId"`
+	StartDate   *time.Time
+	EndDate     *time.Time
+	Progress    uint `gorm:"default:0"`
 }
 
 func AddNewTask(db *gorm.DB, task *Task) (*Task, error) {
@@ -77,6 +82,7 @@ func GetTasksByProjectId(db *gorm.DB, projectId uint) ([]*Task, error) {
 		Preload("Team.Users").
 		Preload("Comments").
 		Where("project_id = ?", projectId).
+		Order("start_date asc").
 		Order("created_at desc").
 		Find(&tasks).Error; err != nil {
 		return nil, err

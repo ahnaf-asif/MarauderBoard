@@ -225,6 +225,21 @@ func RegisterProjectControllers(app fiber.Router) {
 			})
 		}
 		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
+		// add progress to all tasks based on status
+		for _, task := range tasks {
+			switch task.Status {
+			case "Todo":
+				task.Progress = 0
+			case "In Progress":
+				task.Progress = 50
+			case "In Review":
+				task.Progress = 75
+			case "Done":
+				task.Progress = 100
+			case "Cancelled":
+				task.Progress = 0
+			}
+		}
 		tasks_json, _ := json.Marshal(tasks)
 		status_options := []string{"Todo", "In Progress", "In Review", "Done", "Cancelled"}
 		data := load_locals.LoadLocals(ctx)
