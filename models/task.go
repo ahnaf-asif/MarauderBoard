@@ -90,6 +90,22 @@ func GetTasksByProjectId(db *gorm.DB, projectId uint) ([]*Task, error) {
 	return tasks, nil
 }
 
+func GetTasksByProjectIdAndStatus(db *gorm.DB, projectId uint, status string) ([]*Task, error) {
+	tasks := []*Task{}
+	if err := db.Preload("Project").
+		Preload("Assignee").
+		Preload("Reporter").
+		Preload("Team").
+		Preload("Comments").
+		Where("project_id = ? AND status = ?", projectId, status).
+		Order("start_date asc").
+		Order("created_at desc").
+		Find(&tasks).Error; err != nil {
+		return nil, err
+	}
+	return tasks, nil
+}
+
 func GetTasksByTeamId(db *gorm.DB, teamId int) ([]*Task, error) {
 	tasks := []*Task{}
 	if err := db.Preload("Project").

@@ -101,11 +101,23 @@ func RegisterProjectControllers(app fiber.Router) {
 				"error": "Invalid workspace ID",
 			})
 		}
+		todo_tasks, _ := models.GetTasksByProjectIdAndStatus(database.DB, uint(project_id), "Todo")
+		in_progress_tasks, _ := models.GetTasksByProjectIdAndStatus(database.DB, uint(project_id), "In Progress")
+		in_review_tasks, _ := models.GetTasksByProjectIdAndStatus(database.DB, uint(project_id), "In Review")
+		done_tasks, _ := models.GetTasksByProjectIdAndStatus(database.DB, uint(project_id), "Done")
+		cancelled_tasks, _ := models.GetTasksByProjectIdAndStatus(database.DB, uint(project_id), "Cancelled")
 
+		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
 		data := load_locals.LoadLocals(ctx)
 		data["PageTitle"] = project.Name
 		data["Project"] = project
 		data["Workspace"] = workspace
+		data["TodoTasks"] = todo_tasks
+		data["InProgressTasks"] = in_progress_tasks
+		data["InReviewTasks"] = in_review_tasks
+		data["DoneTasks"] = done_tasks
+		data["CancelledTasks"] = cancelled_tasks
+		data["Tasks"] = tasks
 
 		return ctx.Render("projects/dashboard", data, "layouts/project")
 	})

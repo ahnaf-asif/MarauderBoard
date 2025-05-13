@@ -5,7 +5,8 @@
   </td>
   <td class="px-4 py-2 text-gray-700">{{ .TeamUser.Email }}</td>
   <td class="px-4 py-2">
-    {{ if and (ne .TeamUser.ID .User.ID) (ne .TeamUser.ID .Team.Leader.ID) }}
+    {{ if and (ne .TeamUser.ID .User.ID) (ne .TeamUser.ID .Team.Leader.ID) }} {{
+    if or (.User.ID .Team.Leader.ID) (.User.ID .Workspace.Administrator.ID) }}
     <form
       hx-delete="/workspace/{{.Workspace.ID}}/teams/{{.Team.ID}}/users/{{.TeamUser.ID}}"
       hx-confirm="Are you sure you want to remove this user?"
@@ -16,7 +17,9 @@
         Remove
       </button>
     </form>
-    {{ else }}
+    {{ else}}
+    <span class="text-gray-400">---</span>
+    {{ end }} {{ else }}
     <span class="text-gray-400">---</span>
     {{ end }}
   </td>

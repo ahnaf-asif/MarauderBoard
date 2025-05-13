@@ -1,5 +1,199 @@
 {{ define "projects/dashboard" }}
+<div class="max-w-6xl mx-auto px-6 py-10">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-1">Project Dashboard</h2>
+    <p class="text-gray-600">
+      {{ .Project.Name }} — {{ .Project.Description }}
+    </p>
+    <p class="text-sm text-gray-400 mt-1">Workspace: {{ .Workspace.Name }}</p>
+  </div>
 
-<p>Project Dashboard</p>
+  <!-- Task Summary -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    <div class="bg-gray-100 p-4 rounded-lg">
+      <p class="text-gray-500 text-sm">Total Tasks</p>
+      <p class="text-xl font-bold">{{ len .Tasks }}</p>
+    </div>
+    <div class="bg-green-100 p-4 rounded-lg">
+      <p class="text-gray-500 text-sm">Done</p>
+      <p class="text-xl font-bold">{{ len .DoneTasks }}</p>
+    </div>
+    <div class="bg-yellow-100 p-4 rounded-lg">
+      <p class="text-gray-500 text-sm">In Progress</p>
+      <p class="text-xl font-bold">{{ len .InProgressTasks }}</p>
+    </div>
+    <div class="bg-gray-200 p-4 rounded-lg">
+      <p class="text-gray-500 text-sm">Todo</p>
+      <p class="text-xl font-bold">{{ len .TodoTasks }}</p>
+    </div>
+  </div>
 
+  <!-- Task Lists -->
+  <div class="grid md:grid-cols-2 gap-8">
+    <!-- Todo Tasks -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">Todo</h3>
+      <ul class="space-y-2">
+        {{ if not (len .TodoTasks) }}
+        <li class="text-gray-400 italic text-sm">No tasks in Todo</li>
+        {{ else }} {{ range .TodoTasks }}
+        <li class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <div class="font-medium text-gray-800">{{ .Name }}</div>
+          <div class="text-sm text-gray-500">
+            Assigned to: {{ if .Assignee }}{{ .Assignee.FirstName }} {{
+            .Assignee.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unassigned</span
+            >{{ end }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Reporter: {{ if .Reporter }}{{ .Reporter.FirstName }} {{
+            .Reporter.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unreported</span
+            >{{ end }}
+          </div>
+          <div class="mt-2">
+            <a
+              href="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/tasks/{{ .ID }}/view"
+              class="text-indigo-600 hover:underline text-sm"
+              >View</a
+            >
+          </div>
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+    </div>
+
+    <!-- In Progress Tasks -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">In Progress</h3>
+      <ul class="space-y-2">
+        {{ if not (len .InProgressTasks) }}
+        <li class="text-gray-400 italic text-sm">No tasks in In Progress</li>
+        {{ else }} {{ range .InProgressTasks }}
+        <li class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <div class="font-medium text-gray-800">{{ .Name }}</div>
+          <div class="text-sm text-gray-500">
+            Assigned to: {{ if .Assignee }}{{ .Assignee.FirstName }} {{
+            .Assignee.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unassigned</span
+            >{{ end }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Reporter: {{ if .Reporter }}{{ .Reporter.FirstName }} {{
+            .Reporter.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unreported</span
+            >{{ end }}
+          </div>
+          <div class="mt-2">
+            <a
+              href="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/tasks/{{ .ID }}/view"
+              class="text-indigo-600 hover:underline text-sm"
+              >View</a
+            >
+          </div>
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+    </div>
+
+    <!-- In Review Tasks -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">In Review</h3>
+      <ul class="space-y-2">
+        {{ if not (len .InReviewTasks) }}
+        <li class="text-gray-400 italic text-sm">No tasks in In Review</li>
+        {{ else }} {{ range .InReviewTasks }}
+        <li class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <div class="font-medium text-gray-800">{{ .Name }}</div>
+          <div class="text-sm text-gray-500">
+            Assigned to: {{ if .Assignee }}{{ .Assignee.FirstName }} {{
+            .Assignee.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unassigned</span
+            >{{ end }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Reporter: {{ if .Reporter }}{{ .Reporter.FirstName }} {{
+            .Reporter.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unreported</span
+            >{{ end }}
+          </div>
+          <div class="mt-2">
+            <a
+              href="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/tasks/{{ .ID }}/view"
+              class="text-indigo-600 hover:underline text-sm"
+              >View</a
+            >
+          </div>
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+    </div>
+
+    <!-- Done Tasks -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">Done</h3>
+      <ul class="space-y-2">
+        {{ if not (len .DoneTasks) }}
+        <li class="text-gray-400 italic text-sm">No tasks in Done</li>
+        {{ else }} {{ range .DoneTasks }}
+        <li class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <div class="font-medium text-gray-800">{{ .Name }}</div>
+          <div class="text-sm text-gray-500">
+            Assigned to: {{ if .Assignee }}{{ .Assignee.FirstName }} {{
+            .Assignee.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unassigned</span
+            >{{ end }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Reporter: {{ if .Reporter }}{{ .Reporter.FirstName }} {{
+            .Reporter.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unreported</span
+            >{{ end }}
+          </div>
+          <div class="mt-2">
+            <a
+              href="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/tasks/{{ .ID }}/view"
+              class="text-indigo-600 hover:underline text-sm"
+              >View</a
+            >
+          </div>
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+    </div>
+
+    <!-- Cancelled Tasks -->
+    <div>
+      <h3 class="text-xl font-semibold text-gray-700 mb-3">Cancelled</h3>
+      <ul class="space-y-2">
+        {{ if not (len .CancelledTasks) }}
+        <li class="text-gray-400 italic text-sm">No tasks in Cancelled</li>
+        {{ else }} {{ range .CancelledTasks }}
+        <li class="bg-white border border-gray-200 p-4 rounded-lg shadow-sm">
+          <div class="font-medium text-gray-800">{{ .Name }}</div>
+          <div class="text-sm text-gray-500">
+            Assigned to: {{ if .Assignee }}{{ .Assignee.FirstName }} {{
+            .Assignee.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unassigned</span
+            >{{ end }}
+          </div>
+          <div class="text-sm text-gray-500">
+            Reporter: {{ if .Reporter }}{{ .Reporter.FirstName }} {{
+            .Reporter.LastName }}{{ else }}<span class="italic text-gray-400"
+              >Unreported</span
+            >{{ end }}
+          </div>
+          <div class="mt-2">
+            <a
+              href="/workspaces/{{$.Workspace.ID}}/projects/{{$.Project.ID}}/tasks/{{ .ID }}/view"
+              class="text-indigo-600 hover:underline text-sm"
+              >View</a
+            >
+          </div>
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+    </div>
+  </div>
+</div>
 {{ end }}
