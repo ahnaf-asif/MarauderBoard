@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	task_controller "github.com/ahnafasif/MarauderBoard/controllers/task"
 	"github.com/ahnafasif/MarauderBoard/database"
@@ -237,8 +238,19 @@ func RegisterProjectControllers(app fiber.Router) {
 			})
 		}
 		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
-		// add progress to all tasks based on status
+		gantt_start_date := time.Now()
+		gantt_end_date := time.Now().AddDate(0, 0, 14)
+
 		for _, task := range tasks {
+			if task.Status != "Cancelled" {
+				if task.StartDate != nil && task.StartDate.Before(gantt_start_date) {
+					gantt_start_date = *task.StartDate
+				}
+				if task.EndDate != nil && task.EndDate.After(gantt_end_date) {
+					gantt_end_date = *task.EndDate
+				}
+			}
+
 			switch task.Status {
 			case "Todo":
 				task.Progress = 0
@@ -261,6 +273,8 @@ func RegisterProjectControllers(app fiber.Router) {
 		data["Tasks"] = tasks
 		data["StatusOptions"] = status_options
 		data["TasksJson"] = string(tasks_json)
+		data["StartDate"] = gantt_start_date
+		data["EndDate"] = gantt_end_date
 
 		return ctx.Render("projects/gantt", data, "layouts/project")
 	})
