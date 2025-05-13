@@ -75,7 +75,9 @@ func RegisterAuthRoutes(auth fiber.Router) {
 	})
 
 	auth.Get("/register", func(ctx *fiber.Ctx) error {
-		return ctx.Redirect("/", fiber.StatusFound)
+		return ctx.Render("auth/register", fiber.Map{
+			"Title": "Register",
+		})
 	})
 
 	auth.Post("/register", func(ctx *fiber.Ctx) error {
