@@ -1,6 +1,7 @@
 package project_controller
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strconv"
@@ -171,6 +172,70 @@ func RegisterProjectControllers(app fiber.Router) {
 			log.Println("Total Users: ", len(task.Team.Users))
 		}
 		return ctx.Render("projects/backlog", data, "layouts/project")
+	})
+
+	app.Get("/:id/kanban", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		workspace_id := ctx.Params("workspace_id")
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		workspace, err := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid workspace ID",
+			})
+		}
+		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
+		status_options := []string{"Todo", "In Progress", "In Review", "Done", "Cancelled"}
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = project.Name
+		data["Project"] = project
+		data["Workspace"] = workspace
+		data["Tasks"] = tasks
+		data["StatusOptions"] = status_options
+
+		return ctx.Render("projects/kanban", data, "layouts/project")
+	})
+
+	app.Get("/:id/gantt", func(ctx *fiber.Ctx) error {
+		id := ctx.Params("id")
+		workspace_id := ctx.Params("workspace_id")
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		project_id, _ := strconv.Atoi(id)
+
+		project, err := models.GetProjectById(database.DB, uint(project_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid project ID",
+			})
+		}
+
+		workspace, err := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid workspace ID",
+			})
+		}
+		tasks, _ := models.GetTasksByProjectId(database.DB, uint(project_id))
+		tasks_json, _ := json.Marshal(tasks)
+		status_options := []string{"Todo", "In Progress", "In Review", "Done", "Cancelled"}
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = project.Name
+		data["Project"] = project
+		data["Workspace"] = workspace
+		data["Tasks"] = tasks
+		data["StatusOptions"] = status_options
+		data["TasksJson"] = string(tasks_json)
+
+		return ctx.Render("projects/gantt", data, "layouts/project")
 	})
 
 	app.Post("/:id/update", func(ctx *fiber.Ctx) error {

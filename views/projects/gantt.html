@@ -1,0 +1,114 @@
+{{ define "projects/gantt" }}
+<div class="max-w-6xl mx-auto px-6 py-10" x-data="ganttChart({{ .TasksJson }})">
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold text-gray-800 mb-1">Gantt Chart</h2>
+    <p class="text-gray-600">
+      {{ .Project.Name }} — {{ .Project.Description }}
+    </p>
+    <p class="text-sm text-gray-400 mt-1">Workspace: {{ .Workspace.Name }}</p>
+  </div>
+
+  <div class="overflow-x-auto border rounded bg-white shadow">
+    <div class="min-w-[900px]">
+      <!-- Header row -->
+      <div class="flex bg-gray-50 text-xs font-medium text-gray-600 border-b">
+        <div class="w-1/4 p-2">Task</div>
+        <template x-for="day in timeline" :key="day">
+          <div
+            class="w-16 p-2 text-center border-l border-gray-100"
+            x-text="formatDate(day)"
+          ></div>
+        </template>
+      </div>
+
+      <!-- Scheduled tasks -->
+      <template x-for="task in scheduledTasks" :key="task.ID">
+        <div class="flex items-center border-b hover:bg-gray-50 text-sm">
+          <div
+            class="w-1/4 p-2 font-medium text-gray-700"
+            x-text="task.Name"
+          ></div>
+          <template x-for="day in timeline" :key="day">
+            <div class="w-16 h-10 relative border-l border-gray-100">
+              <template x-if="isWithin(task, day)">
+                <div
+                  class="absolute top-1 left-1 right-1 bottom-1 rounded bg-indigo-500 opacity-80"
+                ></div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </template>
+
+      <!-- Unscheduled tasks -->
+      <div class="border-t mt-4 pt-4">
+        <h3 class="text-sm text-gray-500 font-semibold px-2">
+          Unscheduled Tasks
+        </h3>
+        <template x-if="unscheduledTasks.length === 0">
+          <p class="text-xs text-gray-400 italic px-2 py-2">
+            No unscheduled tasks
+          </p>
+        </template>
+        <template x-for="task in unscheduledTasks" :key="task.ID">
+          <div class="flex items-center border-b text-sm hover:bg-gray-50">
+            <div
+              class="w-1/4 p-2 font-medium text-gray-700"
+              x-text="task.Name"
+            ></div>
+            <div class="p-2 italic text-gray-400">No valid dates</div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function ganttChart(tasks) {
+    const today = new Date();
+    const days = 14;
+    const timeline = Array.from({ length: days }, (_, i) => {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      return d;
+    });
+
+    const scheduledTasks = [];
+    const unscheduledTasks = [];
+
+    tasks.forEach((task) => {
+      if (!task.StartDate || !task.EndDate) {
+        unscheduledTasks.push(task);
+        return;
+      }
+
+      const start = new Date(task.StartDate);
+      const end = new Date(task.EndDate);
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        unscheduledTasks.push(task);
+      } else {
+        task._start = start;
+        task._end = end;
+        scheduledTasks.push(task);
+      }
+    });
+
+    return {
+      timeline,
+      scheduledTasks,
+      unscheduledTasks,
+      formatDate(date) {
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      },
+      isWithin(task, day) {
+        return task._start <= day && task._end >= day;
+      },
+    };
+  }
+</script>
+{{ end }}
