@@ -1,0 +1,139 @@
+{{ define "partials/chat" }}
+<style>
+  #chat-typing {
+    display: none;
+  }
+  #chat-typing.htmx-request {
+    display: block;
+  }
+</style>
+
+<div
+  class="max-w-3xl mx-auto bg-white shadow rounded-lg h-[80vh] flex flex-col overflow-hidden"
+  hx-ext="ws"
+  ws-connect="/ws/chat/ws-{{ .ChatGroup.ID }}/{{ .User.ID}}"
+  id="group-chat-container"
+>
+  <div
+    hx-swap-oob="beforeend"
+    id="chat-box"
+    class="flex-1 overflow-y-auto p-4 space-y-4"
+  >
+    {{ range .ChatGroup.Messages }}
+    <div
+      class="flex {{ if eq .UserId $.User.ID }}justify-end{{ else }}justify-start{{ end }}"
+    >
+      {{ if eq .UserId $.User.ID }}
+      <div class="flex items-end gap-2 max-w-[75%]">
+        <div class="flex flex-col items-end text-right">
+          <div class="bg-indigo-100 text-indigo-900 px-4 py-2 rounded-lg">
+            <div class="text-sm font-semibold mb-1">
+              {{ .User.FirstName }} {{ .User.LastName }}
+            </div>
+            <div>{{ .Content }}</div>
+            <div class="text-xs text-gray-400 mt-1">
+              {{ .CreatedAt.Format "Jan 2 15:04" }}
+            </div>
+          </div>
+        </div>
+        <img
+          src="{{ .User.Avatar }}"
+          alt="Avatar"
+          class="w-8 h-8 rounded-full border"
+        />
+      </div>
+      {{ else }}
+      <div class="flex items-end gap-2 max-w-[75%]">
+        <img
+          src="{{ .User.Avatar }}"
+          alt="Avatar"
+          class="w-8 h-8 rounded-full border"
+        />
+        <div>
+          <div class="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg">
+            <div class="text-sm font-semibold mb-1">
+              {{ .User.FirstName }} {{ .User.LastName }}
+            </div>
+            <div>{{ .Content }}</div>
+            <div class="text-xs text-gray-400 mt-1">
+              {{ .CreatedAt.Format "Jan 2 15:04" }}
+            </div>
+          </div>
+        </div>
+      </div>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+
+  <div id="chat-typing" class="p-4 hidden">
+    <div class="text-left">
+      <div
+        class="inline-block bg-gray-100 text-gray-900 px-4 py-2 rounded-lg max-w-[75%] animate-pulse"
+      >
+        Someone is typing...
+      </div>
+    </div>
+  </div>
+
+  <form
+    id="form"
+    ws-send
+    class="border-t px-4 py-3 flex items-center space-x-2"
+  >
+    <input
+      type="text"
+      name="content"
+      id="group-chat-input"
+      class="flex-1 border rounded px-4 py-2"
+      placeholder="Send a message..."
+      required
+    />
+    <input type="hidden" name="user_id" value="{{ .User.ID }}" />
+    <input type="hidden" name="chat_group_id" value="{{ .ChatGroup.ID }}" />
+    <input
+      type="hidden"
+      name="user_name"
+      value="{{ .User.FirstName }} {{.User.LastName}}"
+    />
+    <button
+      type="submit"
+      class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700"
+    >
+      Send
+    </button>
+  </form>
+</div>
+<script>
+  function scrollChatToBottom() {
+    const container = document.getElementById("chat-box");
+    if (container) {
+      requestAnimationFrame(() => {
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+  }
+
+  // Scroll on page load
+  window.addEventListener("load", scrollChatToBottom);
+
+  // Scroll after sending a message
+  document.addEventListener("htmx:wsAfterSend", function () {
+    document.getElementById("group-chat-input").value = "";
+    scrollChatToBottom();
+  });
+
+  // Scroll on DOM changes (new messages)
+  const container = document.getElementById("chat-box");
+  if (container) {
+    const observer = new MutationObserver(() => {
+      scrollChatToBottom();
+    });
+
+    observer.observe(container, {
+      childList: true,
+      subtree: true, // So it picks up changes deep inside
+    });
+  }
+</script>
+{{ end }}

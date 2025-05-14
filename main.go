@@ -22,6 +22,8 @@ func init() {
 	engine := html.New("./views", ".html")
 	engine.Reload(true)
 
+	helpers.TemplateEngine = engine
+
 	app = fiber.New(fiber.Config{
 		Views: engine,
 	})

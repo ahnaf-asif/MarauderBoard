@@ -121,6 +121,17 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 		return ctx.Render("workspaces/settings", data, "layouts/workspace")
 	})
 
+	app.Get("/:id/chat", func(ctx *fiber.Ctx) error {
+		data := load_locals.LoadLocals(ctx)
+		workspace_id := ctx.Params("id")
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		workspace, _ := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		data["Workspace"] = workspace
+		data["PageTitle"] = workspace.Name + " Chat"
+		data["ChatGroup"] = workspace.ChatGroup
+		return ctx.Render("partials/chat", data, "layouts/workspace")
+	})
+
 	app.Post("/:id/update", func(ctx *fiber.Ctx) error {
 		id := ctx.Params("id")
 		workspace_id, _ := strconv.Atoi(id)

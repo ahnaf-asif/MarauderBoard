@@ -12,10 +12,20 @@ import (
 	"github.com/ahnafasif/MarauderBoard/helpers"
 	"github.com/ahnafasif/MarauderBoard/middlewares"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
 	"github.com/shareed2k/goth_fiber"
 )
 
 func RegisterRoutes(app *fiber.App) {
+	app.Use("/ws/", func(c *fiber.Ctx) error {
+		if websocket.IsWebSocketUpgrade(c) {
+			return c.Next()
+		}
+		return fiber.ErrUpgradeRequired
+	})
+
+	app.Get("/ws/chat/ws-:group_id/:user_id", middlewares.ChatSocketHandler)
+
 	app.Get("/", func(ctx *fiber.Ctx) error {
 		user, err := helpers.GetAuthUserSessionData(ctx)
 		if err != nil {

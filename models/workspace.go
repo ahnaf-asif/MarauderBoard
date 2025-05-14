@@ -69,6 +69,9 @@ func GetWorkspaceById(db *gorm.DB, id uint) (*Workspace, error) {
 		Preload("Teams").
 		Preload("Projects").
 		Preload("ChatGroup").
+		Preload("ChatGroup.Messages").
+		Preload("ChatGroup.Users").
+		Preload("ChatGroup.Messages.User").
 		First(&workspace, id).Error; err != nil {
 		return nil, err
 	}

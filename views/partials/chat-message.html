@@ -1,0 +1,47 @@
+{{ define "partials/chat-message" }}
+<div id="chat-box" hx-swap-oob="beforeend">
+  <div
+    class="flex {{ if eq .ReceiverUser.ID .Message.UserId }}justify-end{{ else }}justify-start{{ end }}"
+  >
+    {{ if eq .ReceiverUser.ID .Message.UserId }}
+    <div class="flex items-end gap-2 max-w-[75%]">
+      <div class="flex flex-col items-end text-right">
+        <div class="bg-indigo-100 text-indigo-900 px-4 py-2 rounded-lg">
+          <div class="text-sm font-semibold mb-1">
+            {{ .Message.User.FirstName }} {{ .Message.User.LastName }}
+          </div>
+          <div>{{ .Message.Content }}</div>
+          <div class="text-xs text-gray-400 mt-1">
+            {{ .Message.CreatedAt.Format "Jan 2 15:04" }}
+          </div>
+        </div>
+      </div>
+      <img
+        src="{{ .Message.User.Avatar }}"
+        alt="Avatar"
+        class="w-8 h-8 rounded-full border"
+      />
+    </div>
+    {{ else }}
+    <div class="flex items-end gap-2 max-w-[75%]">
+      <img
+        src="{{ .Message.User.Avatar }}"
+        alt="Avatar"
+        class="w-8 h-8 rounded-full border"
+      />
+      <div>
+        <div class="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg">
+          <div class="text-sm font-semibold mb-1">
+            {{ .Message.User.FirstName }} {{ .Message.User.LastName }}
+          </div>
+          <div>{{ .Message.Content }}</div>
+          <div class="text-xs text-gray-400 mt-1">
+            {{ .Message.CreatedAt.Format "Jan 2 15:04" }}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</div>
+{{ end }}
