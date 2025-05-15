@@ -28,19 +28,33 @@
           <div
             class="w-1/4 px-2 py-2 font-medium text-gray-700 flex flex-col justify-center"
           >
-            <div x-text="task.Name"></div>
-            <div
-              class="w-full h-2 mt-1 bg-gray-200 rounded-full overflow-hidden"
-            >
-              <div
-                class="h-full bg-green-500 transition-all duration-300"
-                :style="`width: ${task.Progress}%`"
-              ></div>
+            <div>
+              <template x-if="task.Status.toLowerCase() === 'cancelled'">
+                <s x-text="task.Name" class="text-red-500"></s>
+              </template>
+              <template x-if="task.Status.toLowerCase() !== 'cancelled'">
+                <span x-text="task.Name"></span>
+              </template>
             </div>
-            <p
-              class="text-xs text-gray-400 mt-1"
-              x-text="`${task.Progress}% complete`"
-            ></p>
+            <template x-if="task.Status.toLowerCase() === 'cancelled'">
+              <p class="text-xs text-red-500 mt-1 italic">Cancelled task</p>
+            </template>
+            <template x-if="task.Status.toLowerCase() !== 'cancelled'">
+              <div>
+                <div
+                  class="w-full h-2 mt-1 bg-gray-200 rounded-full overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-green-500 transition-all duration-300"
+                    :style="`width: ${task.Progress}%`"
+                  ></div>
+                </div>
+                <p
+                  class="text-xs text-gray-400 mt-1"
+                  x-text="`${task.Progress}% complete`"
+                ></p>
+              </div>
+            </template>
           </div>
 
           <!-- Timeline blocks -->
@@ -50,17 +64,19 @@
             >
               <template x-if="isWithin(task, day)">
                 <div
-                  class="absolute top-1 left-1 right-1 bottom-1 rounded bg-indigo-500 opacity-80"
+                  class="absolute top-1 left-1 right-1 bottom-1 rounded opacity-80"
+                  :class="task.Status.toLowerCase() === 'cancelled' ? 'bg-red-500' : 'bg-indigo-500'"
                 ></div>
               </template>
             </div>
           </template>
         </div>
       </template>
+
       <div class="border-t mt-10 pt-4">
-        <h3 class="text-sm text-gray-500 font-semibold px-2">
+        <h1 class="text-lg text-gray-500 font-semibold px-2">
           Unscheduled Tasks
-        </h3>
+        </h1>
         <template x-if="unscheduledTasks.length === 0">
           <p class="text-xs text-gray-400 italic px-2 py-2">
             No unscheduled tasks
@@ -126,13 +142,13 @@
       },
       progressPercent(status) {
         switch ((status || "").toLowerCase()) {
-          case "Todo":
+          case "todo":
             return 0;
-          case "In Progress":
+          case "in progress":
             return 33;
-          case "In Review":
+          case "in review":
             return 66;
-          case "Done":
+          case "done":
             return 100;
           default:
             return 0;
