@@ -54,7 +54,15 @@ func GetAllWorkspacesByUserId(db *gorm.DB, userId uint) ([]*Workspace, error) {
 			}
 		}
 	}
-	return filteredWorkspaces, nil
+	var uniqueWorkspaces []*Workspace
+	uniqueMap := make(map[uint]bool)
+	for _, workspace := range filteredWorkspaces {
+		if _, exists := uniqueMap[workspace.ID]; !exists {
+			uniqueWorkspaces = append(uniqueWorkspaces, workspace)
+			uniqueMap[workspace.ID] = true
+		}
+	}
+	return uniqueWorkspaces, nil
 }
 
 func AddWorkspace(db *gorm.DB, workspace *Workspace) (*Workspace, error) {

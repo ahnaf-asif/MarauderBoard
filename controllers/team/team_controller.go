@@ -141,6 +141,21 @@ func RegisterTeamController(app fiber.Router) {
 		return ctx.Render("workspaces/team/edit", data, "layouts/workspace")
 	})
 
+	app.Get("/:team_id/chat", func(ctx *fiber.Ctx) error {
+		data := load_locals.LoadLocals(ctx)
+		workspace_id, _ := ctx.ParamsInt("workspace_id")
+		team_id, _ := ctx.ParamsInt("team_id")
+		workspace, _ := models.GetWorkspaceById(database.DB, uint(workspace_id))
+		team, _ := models.GetTeamById(database.DB, uint(team_id))
+		data["Workspace"] = workspace
+		data["Team"] = team
+		data["PageTitle"] = team.ChatGroup.Name + " Chat"
+		data["ChatGroup"] = team.ChatGroup
+		data["ChatBoxUsers"] = team.Users
+
+		return ctx.Render("partials/chat", data, "layouts/team")
+	})
+
 	app.Post("/:team_id/update", func(ctx *fiber.Ctx) error {
 		team_id, _ := ctx.ParamsInt("team_id")
 		name := ctx.FormValue("name")

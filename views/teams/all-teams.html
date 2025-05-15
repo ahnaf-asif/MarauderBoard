@@ -17,6 +17,7 @@
     {{ range .Teams }}
     <div
       id="team-{{ .ID }}"
+      x-data="{ userId: {{ $.User.ID }}, members: [{{ range $i, $u := .Users }}{{ if $i }},{{ end }}{{ $u.ID }}{{ end }}] }"
       class="bg-white shadow rounded-lg p-5 border border-gray-200 flex flex-col justify-between"
     >
       <div class="space-y-2">
@@ -32,7 +33,8 @@
         </p>
         {{ if .ChatGroup }}
         <a
-          href="/chat/groups/{{ .ChatGroup.ID }}"
+          x-show="members.includes(userId)"
+          href="/workspaces/{{ $ctx.Workspace.ID }}/teams/{{ .ID }}/chat"
           class="inline-block text-indigo-600 text-sm hover:underline"
         >
           Open Chat

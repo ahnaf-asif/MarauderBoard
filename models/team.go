@@ -31,6 +31,8 @@ func GetTeamById(db *gorm.DB, id uint) (*Team, error) {
 		Preload("Users").
 		Preload("Projects").
 		Preload("ChatGroup").
+		Preload("ChatGroup.Messages").
+		Preload("ChatGroup.Messages.User").
 		First(team, id).Error; err != nil {
 		return nil, err
 	}

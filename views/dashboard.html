@@ -11,7 +11,7 @@
   <p class="text-gray-400 italic">No workspaces available.</p>
   {{ else }}
   <div class="space-y-10">
-    {{ range .Workspaces }}
+    {{ range .Workspaces }} {{ $ctx := . }}
     <div class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm">
       <div class="mb-4">
         <h3 class="text-2xl font-semibold text-gray-800">{{ .Name }}</h3>
@@ -36,7 +36,7 @@
             <li class="flex justify-between items-center">
               <span class="text-sm text-gray-600">{{ .Name }}</span>
               <a
-                href="/workspaces/{{ $.ID }}/projects/{{ .ID }}/dashboard"
+                href="/workspaces/{{ $ctx.ID }}/projects/{{ .ID }}/dashboard"
                 class="text-indigo-500 text-xs hover:underline"
                 >View</a
               >
@@ -57,7 +57,7 @@
             <li class="flex justify-between items-center">
               <span class="text-sm text-gray-600">{{ .Name }}</span>
               <a
-                href="/workspaces/{{ $.ID }}/teams/{{ .ID }}"
+                href="/workspaces/{{ $ctx.ID }}/teams/{{ .ID }}"
                 class="text-indigo-500 text-xs hover:underline"
                 >View</a
               >

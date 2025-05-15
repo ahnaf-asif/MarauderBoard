@@ -1,7 +1,6 @@
 package notifications_controller
 
 import (
-	"log"
 	"math/rand"
 	"strconv"
 
@@ -21,7 +20,6 @@ func RegisterNotificationController(app fiber.Router) {
 	})
 
 	app.Post("/:id/mark-read", func(ctx *fiber.Ctx) error {
-		log.Println("Mark e ashchi")
 		notification_id, _ := ctx.ParamsInt("id")
 		err := models.MarkNotificationAsSeen(database.DB, uint(notification_id))
 		if err != nil {

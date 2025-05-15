@@ -109,7 +109,6 @@
     </form>
   </div>
 
-  <!-- User List Sidebar -->
   <div class="border-l h-full overflow-y-auto p-4 bg-gray-50">
     <h2 class="text-lg font-semibold mb-4">Participants</h2>
     <ul class="space-y-4">
@@ -122,6 +121,9 @@
         />
         <div class="text-sm">
           <div class="font-medium">{{ .FirstName }} {{ .LastName }}</div>
+          <div class="text-gray-500">
+            {{ if eq .ID $.User.ID }}You{{ else }}{{ .Email }}{{ end }}
+          </div>
         </div>
       </li>
       {{ end }}
