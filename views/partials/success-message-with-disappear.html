@@ -1,7 +1,7 @@
 {{ define "partials/success-message-with-disappear" }}
 
 <div
-  id="success-message"
+  id="success-message-disappear"
   class="mb-5 text-green-500 font-semibold transition-opacity duration-500"
 >
   {{ .Message }}
@@ -17,7 +17,7 @@
 {{ end }}
 
 <script>
-  const msg = document.getElementById("success-message");
+  const msg = document.getElementById("success-message-disappear");
   setTimeout(function () {
     if (msg) {
       msg.style.opacity = "0";

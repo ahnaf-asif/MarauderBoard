@@ -1,6 +1,8 @@
 package models
 
 import (
+	// "log"
+
 	"gorm.io/gorm"
 )
 
@@ -76,4 +78,27 @@ func GetWorkspaceById(db *gorm.DB, id uint) (*Workspace, error) {
 		return nil, err
 	}
 	return &workspace, nil
+}
+
+func GetWorkspaceUsers(db *gorm.DB, id uint) ([]*User, error) {
+	teams, _ := GetTeamsByWorkspaceId(db, id)
+	workspace, _ := GetWorkspaceById(db, id)
+	var users []*User
+	for _, team := range teams {
+		for _, user := range team.Users {
+			users = append(users, user)
+		}
+	}
+	users = append(users, workspace.Administrator)
+	var unique_users []*User
+	unique_map := make(map[uint]bool)
+
+	for _, user := range users {
+		if _, exists := unique_map[user.ID]; !exists {
+			unique_users = append(unique_users, user)
+			unique_map[user.ID] = true
+		}
+	}
+
+	return unique_users, nil
 }

@@ -117,6 +117,54 @@ func RegisterTaskController(app fiber.Router) {
 		return ctx.Render("tasks/view", data, "layouts/task")
 	})
 
+	app.Get("/:task_id/edit", func(ctx *fiber.Ctx) error {
+		project_id := ctx.Params("project_id")
+		workspace_id := ctx.Params("workspace_id")
+		task_id := ctx.Params("task_id")
+		project_id_int, _ := strconv.Atoi(project_id)
+		workspace_id_int, _ := strconv.Atoi(workspace_id)
+		task_id_int, _ := strconv.Atoi(task_id)
+		project, _ := models.GetProjectById(database.DB, uint(project_id_int))
+		workspace, _ := models.GetWorkspaceById(database.DB, uint(workspace_id_int))
+		task, _ := models.GetTaskById(database.DB, uint(task_id_int))
+
+		data := load_locals.LoadLocals(ctx)
+		data["PageTitle"] = "Edit Task"
+		data["Project"] = project
+		data["Workspace"] = workspace
+		data["Task"] = task
+
+		return ctx.Render("tasks/edit", data, "layouts/task")
+	})
+
+	app.Post("/:task_id/edit", func(ctx *fiber.Ctx) error {
+		task_id, _ := strconv.Atoi(ctx.Params("task_id"))
+		name := ctx.FormValue("name")
+		description := ctx.FormValue("description")
+		start_date, _ := time.Parse("2006-01-02", ctx.FormValue("start_date"))
+		end_date, _ := time.Parse("2006-01-02", ctx.FormValue("end_date"))
+		team_id := ctx.FormValue("team_id")
+		team_id_int, _ := strconv.Atoi(team_id)
+		team_id_uint := uint(team_id_int)
+
+		task, err := models.GetTaskById(database.DB, uint(task_id))
+		if err != nil {
+			return ctx.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{
+				"error": "Invalid task ID",
+			})
+		}
+		task.Name = name
+		task.Description = description
+		task.StartDate = &start_date
+		task.EndDate = &end_date
+		task.TeamId = &team_id_uint
+		database.DB.Save(task)
+
+		return ctx.Render("partials/success-message-with-disappear", fiber.Map{
+			"Message": "Task updated successfully",
+		})
+	})
+
 	app.Delete("/:task_id/delete", func(ctx *fiber.Ctx) error {
 		task_id := ctx.Params("task_id")
 		task_id_int, _ := strconv.Atoi(task_id)

@@ -129,6 +129,9 @@ func RegisterWorkspaceControllers(app fiber.Router) {
 		data["Workspace"] = workspace
 		data["PageTitle"] = workspace.Name + " Chat"
 		data["ChatGroup"] = workspace.ChatGroup
+		workspace_users, _ := models.GetWorkspaceUsers(database.DB, uint(workspace_id_int))
+		log.Println("Workspace Users: ", workspace_users)
+		data["ChatBoxUsers"] = workspace_users
 		return ctx.Render("partials/chat", data, "layouts/workspace")
 	})
 
